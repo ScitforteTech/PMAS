@@ -1,0 +1,116 @@
+﻿@model ISB.Models.mainModel;
+
+
+<div id="content" class="content">
+    <div class="containerbox">
+    <div class="container mt-5">
+        <div class="text-center">
+                <h4 class="font-bold text-lg">Update Task Details</h4>
+        </div>
+    
+        <form method="post"  enctype="multipart/form-data">
+            <div class="row">
+                <input type="hidden" name="task_id" value="@Model.task_data.task_id" />
+                <div class="col">
+                    <label for="employeeName" class="form-label">Task Name</label>
+                    <input type="text" value="@Model.task_data.name" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                </div>
+                    <div class="col"> 
+                        <label for="employeeEmail" class="form-label">Project Name</label> 
+                        <select name="project_" required class="form-select" id="salutation">  
+
+                         <option value="@Model.task_data.project_" hidden>@Model.project_data.name</option>  
+                         @foreach (var data in Model.project_details) 
+                         {  
+                         <option value=@data.Project_id>@data.name</option>  
+                       } 
+                          </select> 
+                   </div> 
+             </div>
+          
+
+                  
+                 
+                <div class="row">
+                        <div class="col">
+                            <label for="employeeName" class="form-label">Due Date</label>
+                            <input type="date" value="@Model.task_data.due_date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="due_date" placeholder="e.g. John Doe" required>
+                        </div>
+
+
+                        <div class="col">  
+                         <label for="projectStatus" class="form-label">Task Status</label>  
+                       <select name="task_statuss" required class="form-select" id="projectStatus">  
+                           <option value="@Model.task_data.task_statuss" hidden>@Model.task_statusdata.name</option>  
+                           @foreach (var data in Model.task_statusdetails)  
+                            {  
+                                 <option value=@data.id>  @data.name</option>  
+                            }                     </select>  
+                     </div>  
+
+                  <div class="col">  
+                       <label for="projectStatus" class="form-label">Task Type</label>  
+                         <select name="task_types" required class="form-select" id="projectStatus">  
+                             <option value="@Model.task_data.task_types">@Model.task_typedata.name</option>  
+                             @foreach (var data in Model.task_typedetails)  
+                             {  
+                                 <option value=@data.id>  @data.name</option>  
+                             }  
+                         </select>  
+                     </div>  
+
+                </div>
+                <div class="row">
+                    <div class="col">
+
+                        <label for="priorityLevel" class="form-label">Priority Level</label>
+                        <select name="task_priority" required class="form-select" id="priorityLevel">  
+                            <option value="@Model.task_data.task_priority">@Model.task_prioritesData.name</option> 
+                            @foreach (var data in Model.task_prioritesDetails)   
+                            {   
+                             <option value=@data.id>   
+                                    @data.name   
+                                </option>  
+                             }  
+                         </select> 
+
+                    </div>
+
+                   
+                <div class="col">
+                    <label for="employeeEmail" class="form-label"> Assigned to </label>
+                    <select name="employee_ids" required class="form-select" id="salutation">
+
+                        <option value="@Model.task_data.employee_ids">@Model.employee_data.name</option>
+                        @foreach (var data in Model.employee_details)
+                        {
+                            <option value=@data.id>
+                                @data.name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+        </div> <div class="row">
+            <div class="col">
+                <label for="employeeEmail" class="form-label"> Document </label>
+                <input type="file" value="@Model.task_data.document" name="document" class="form-control">
+            </div>
+
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <label for="employeeEmail" class="form-label"> Description</label>
+                <textarea class="form-control" id="employeeName" name="description" placeholder="write a Description" required>
+                    @Model.task_data.description        </textarea>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+
+                </form>
+        </div>
+    </div>
+</div>

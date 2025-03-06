@@ -1,0 +1,123 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+<div class="content" id="content">
+
+    <h3 class="text-2xl font-bold"> Corrective Measures  </h3>
+
+    <div class="search-bar">
+
+        <div class="container text-end">
+
+            <a href="@Url.Action("addCorrectiveMeasures","admin")" class="btn btnadd bg-blue-500 hover:bg-blue-700 ">Add  Corrective Measures</a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>
+                    Priority Level
+
+                </th>
+
+                <th> Improvement Suggestions</th>
+                
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.correctiveMeasures_Details)
+            {
+                <tr>
+
+                    <td>@data.priority.name</td>
+                    <td>@data.ImprovementSuggestions</td>
+
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                            @* <li><a href="@Url.Action("update_auditmeasure","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</a></li> *@
+
+                            <li><a href="@Url.Action("delete_auditmeasure","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+<!-- Modal -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+      
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>
+
+
+
+

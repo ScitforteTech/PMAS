@@ -1,0 +1,107 @@
+﻿@model ISB.Models.mainModel;
+<div class="containerbox">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Risk</h5>
+                 
+                </div>
+                <div class="modal-body">
+                    <h6>Update Impact Risk Details</h6>
+                    <form method="post"  enctype="multipart/form-data">
+                        <div class="row">
+
+                            <input type="hidden" name="id" value="@Model.impactrisk_data.id" />
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Risk</label>
+                                <input type="text" class="form-control" id="employeeName" value="@Model.impactrisk_data.risk_name" name="risk_name" placeholder="e.g. John Doe" required>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeDescription" class="form-label">Scoring</label>
+                                <input class="form-control" pattern="[0-9]{1,}" id="employeeDescription" value="@Model.impactrisk_data.scoring" name="scoring" placeholder="Write a scoring" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .containerbox {
+        margin-top: 120px;
+        padding: 30px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>
+
+

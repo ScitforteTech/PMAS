@@ -1,0 +1,132 @@
+﻿@model ISB.Models.mainModel;
+<div class="content" id="content">
+<div class="containerbox">
+    <div class="container mt-5">
+       
+                    <h6>Projects Details</h6>
+        <form method="post" asp-action="add_project" asp-controller="admin" enctype="multipart/form-data">
+            <div class="row">
+                <input value="@Model.project_data.Project_id" name="project_id"  type="hidden" />
+                <div class="col">
+                    <label for="employeeName" class="form-label">Project Name</label>
+                    <input type="text" value="@Model.project_data.name" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="col">
+                    <label for="employeeEmail" class="form-label">Client Name</label>
+                    <select name="client_id" required class="form-select" id="salutation">
+
+                        <option hidden value="@Model.project_data.client_id">@Model.client_data.name</option>
+                        @foreach (var data in Model.client_details)
+                        {
+                            <option value=@data.id>@data.name</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col">
+                    <label for="employeeName" class="form-label">Start Date</label>
+                    <input type="date" value="@Model.project_data.start_date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="start_date" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="col">
+                    <label for="employeeName" class="form-label">End Date</label>
+                    <input type="date" value="@Model.project_data.end_date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="end_date" placeholder="e.g. John Doe" required>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col">
+                    <label for="projectStatus" class="form-label">Project Status</label>
+                    <select name="project_statuss" required class="form-select" id="projectStatus">
+                        <option hidden value="@Model.project_data.project_statuss">@Model.proStatus_data.name_status</option>
+                        @foreach (var data in Model.pro_Statusdetail)
+                        {
+                            <option value=@data.status_id>  @data.name_status</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label for="projectStatus" class="form-label">Project Type</label>
+                    <select name="project_types" required class="form-select" id="projectStatus">
+                        <option value="@Model.project_data.project_types">@Model.projects_typesData.project_typeName</option>
+                        @foreach (var data in Model.projects_types)
+                        {
+                            <option value=@data.id>  @data.project_typeName</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col">
+
+                    <label for="priorityLevel" class="form-label">Priority Level</label>
+                    <select name="project_priority" required class="form-select" id="priorityLevel">
+                        <option value="@Model.project_data.project_priority">@Model.projects_prioritesData.name</option>
+                        @foreach (var data in Model.projects_prioritesDetails)
+                        {
+                            <option value=@data.id>
+                                @data.name
+                            </option>
+                        }
+                    </select>
+
+                </div>
+                <div class="col">
+                    <label for="employeeEmail" class="form-label"> Assigned to </label>
+                    <select name="team_id" required class="form-select" id="salutation">
+
+                        <option value="@Model.project_data.team_id">@Model.employee_data.name</option>
+                        @foreach (var data in Model.employee_details)
+                        {
+                            <option value=@data.id>
+                                @data.name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+            </div> <div class="row">
+                <div class="col">
+                    <label for="employeeEmail" class="form-label"> Document </label>
+                    <input value="@Model.project_data.document" type="file" name="document" class="form-control">
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="employeeEmail" class="form-label"> Description</label>
+                    <textarea class="form-control" id="employeeName" name="description" placeholder="write a Description" required>
+                       @Model.project_data.description        </textarea>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+        </form>
+
+    </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+</div>
+<style>
+    .containerbox {
+ 
+
+        padding: 30px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    .modal-title {
+        padding: 10px;
+    }
+</style>

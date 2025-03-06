@@ -1,0 +1,184 @@
+﻿@model ISB.Models.mainModel;
+<div id="content" class="content">
+    <div class="container mt-5">
+   
+                    <h5 class="text-2xl font-bold ">Edit Employee</h5>
+              
+                   
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="hidden" value="@Model.employee_data.id" name="id">
+                                <label for="salutation" class="form-label">Salutation</label>
+                                <select name="salutation" required class="form-select" id="salutation">
+
+                                    <option value="@Model.employee_data.salutation">@Model.employee_data.salutation</option>
+                                    <option value="Mr">Mr.</option>
+                                    <option value="Ms">Ms.</option>
+                                    <option value="Mrs">Mrs.</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employeeName" class="form-label">Employee Name</label>
+                                <input type="text" value="@Model.employee_data.name" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employeeEmail" class="form-label">Employee Email</label>
+                                <input type="email" value="@Model.employee_data.email" name="email" class="form-control" id="employeeEmail" placeholder="e.g. johndoe@example.com" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="profilePicture" class="form-label">Profile Picture</label>
+
+                                <input type="file" name="iamge" value="@Model.employee_data.iamge" class="form-control" id="employeeEmail" placeholder="e.g. johndoe@example.com" required>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                     
+                            <div class="col-md-3">
+                                <label for="mobile" class="form-label">Mobile</label>
+                                <input type="text" value="@Model.employee_data.mobile" name="mobile" class="form-control" id="mobile" placeholder="e.g. 1234567890" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" value="@Model.employee_data.Dob" class="form-control" id="dob" name="Dob">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employeeRole" class="form-label">Employee Roles</label>
+                                <select class="form-select" id="employeeRole" name="role_id">
+
+                                    <option hidden value="@Model.employee_data.role_id">@Model.roles_data.roles_name</option>
+                                    @foreach (var data in Model.role_detail)
+                                    {
+                                        <option value="@data.id">@data.roles_name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="@Model.employee_data.gender">@Model.employee_data.gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                     
+                            <div class="col-md-3">
+                                <label for="joiningDate" class="form-label">Joining Date</label>
+                                <input type="date" value="@Model.employee_data.joining_date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="joiningDate" name="joining_date">
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <label for="reportingTo" class="form-label">Reporting To</label>
+                                <input type="text" class="form-control" id="reportingTo">
+                            </div> -->
+                            <div class="col-md-3">
+                                <label for="department" class="form-label">Department</label>
+
+                                <select name="depart_id" required class="form-select" id="salutation">
+
+                                    <option value="@Model.employee_data.depart_id">@Model.department_data.department_name</option>
+                                    @foreach (var data in Model.department_details)
+                                    {
+                                        <option value="@data.id">@data.department_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="designation" class="form-label">Designation</label>
+                                <select name="designationid" required class="form-select" id="salutation">
+
+                                    <option value="@Model.employee_data.depart_id">@Model.design_data.designation_name</option>
+                                    @foreach (var data in Model.design_details)
+                                    {
+                                        <option value="@data.id">@data.designation_name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- <div class="col-md-3">
+                                <label for="department" class="form-label">Department</label>
+                                <input type="text" class="form-control" id="department">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="designation" class="form-label">Designation</label>
+                                <input type="text" class="form-control" id="designation">
+                            </div> -->
+                            <!-- <div class="col-md-6">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address">
+                            </div> -->
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="about" class="form-label">About</label>
+                                <textarea class="form-control" name="about" id="about" rows="2">@Model.employee_data.about</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="about" class="form-label">Address</label>
+                                <textarea name="address" class="form-control" id="about" rows="2">@Model.employee_data.address</textarea>
+                            </div>
+                        </div>
+                        <h6 class="mt-4">Other Details</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Login Allowed?</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="login_allowed" id="loginYes" value=1 checked>
+                                        <label class="form-check-label" for="loginYes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="login_allowed" id="loginNo" value=0>
+                                        <label class="form-check-label" for="loginNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Receive email notifications?</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="email_Notification" id="emailYes" value=1 checked>
+                                        <label class="form-check-label" for="emailYes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="email_Notification" id="emailNo" value=0>
+                                        <label class="form-check-label" for="emailNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employmentType" class="form-label">Employee Type</label>
+                                <select class="form-select" id="employmentType" name="emplyoment_type">
+                                    <option value="@Model.employee_data.emplyoment_type" hidden>@Model.employee_data.emplyoment_type</option>
+                                    @foreach (var data in Model.emp_types_details)
+                                    {
+                                        <option value="@data.name">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="maritalStatus" class="form-label">Marital Status</label>
+                                <select class="form-select" id="maritalStatus" name="marital_status">
+                                    <option hidden value="@Model.employee_data.marital_status">@Model.employee_data.marital_status</option>
+                                    @foreach (var data in Model.materialStatus_details)
+                                    {
+                                        <option value="@data.name">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                      
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3" >Save</button>
+                    </form>
+                </div>
+             
+     </div>
+
+

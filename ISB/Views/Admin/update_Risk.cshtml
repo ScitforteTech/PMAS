@@ -1,0 +1,142 @@
+﻿@model ISB.Models.mainModel;
+
+<div class="containerbox">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Risk</h5>
+                  
+                </div>
+                <div class="modal-body">
+                    <h6>Update Risk Details</h6>
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.risk_data.id" />
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Risk Factor</label>
+                                <input type="text" class="form-control" id="employeeName" value="@Model.risk_data.Risk_factor" name="Risk_factor" placeholder="e.g. John Doe" required>
+
+                            </div>
+                            <div class="col">
+                                <label for="employeeDescription" class="form-label">Impact Risk</label>
+                                <select name="risk_category" required class="form-select" id="priorityLevel">
+
+                                    <option hidden value="@Model.risk_data.risk_category">Select a Risk</option>
+
+                                    @foreach (var data in Model.impact_Risks)
+                                    {
+                                        <option value="@data.risk_name">@data.risk_name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeDescription" class="form-label">Impact Risk</label>
+                                <select name="impact_risk" required class="form-select" id="priorityLevel">
+
+                                    <option hidden value="@Model.risk_data.impact_risk">Select a Risk</option>
+                                    @foreach (var data in Model.impact_Risks)
+                                    {
+                                        <option value=@data.scoring>@data.risk_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeDescription" class="form-label">likelihood Risk</label>
+                                <select name="likelihood_risk" required class="form-select" id="priorityLevel">
+
+                                    <option hidden value="@Model.risk_data.likelihood_risk">Select a Risk</option>
+                                    @foreach (var data in Model.Likelihood_risk)
+                                    {
+                                        <option value=@data.scoring>@data.risk_name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="employeeDescription" class="form-label">Description</label>
+                                    <textarea class="form-control"  id="employeeDescription" name="description" placeholder="Write a description" rows="4" required>@Model.risk_data.description</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+
+    .containerbox {
+        margin-top: 120px;
+        padding: 30px;
+    }
+
+    form {
+        padding: 10px;
+    }
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>
+
+

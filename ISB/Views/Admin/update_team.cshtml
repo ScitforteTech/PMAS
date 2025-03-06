@@ -1,0 +1,206 @@
+﻿@model ISB.Models.mainModel;
+<div class="containerbox">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Team</h5>
+
+                </div>
+                <div class="modal-body">
+                    <h6>Teams Details</h6>
+                    <form method="post">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.team_data.id" />
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Team Name</label>
+                                <input type="text" class="form-control" value="@Model.team_data.team_name" id="employeeName" name="team_name" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Leader</label>
+                                <select name="team_leader" required class="form-select" id="salutation">
+
+                                    <option hidden required>@Model.team_data.team_leader</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Team Description</label>
+                                <input type="text" class="form-control" id="employeeName" name="team_des" value="@Model.team_data.team_des" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Status</label>
+                                <select name="salutation" required class="form-select" id="salutation">
+                                    @if (Model.team_data.status == 1)
+                                    {
+
+                                        <option value=1>Activate</option>
+                                    }else{
+                                        <option value=0>Deactivate</option>
+                                    }
+                                    <option value=1>Active</option>
+                                    <option value=0>Dective</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member1" required class="form-select" id="salutation">
+
+                                    <option hidden>@Model.team_data.team_member1</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member2" required class="form-select" id="salutation">
+
+                                    <option hidden>@Model.team_data.team_member2</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member3" required class="form-select" id="salutation">
+
+                                    <option hidden>@Model.team_data.team_member3</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member4" required class="form-select" id="salutation">
+
+                                    <option hidden>@Model.team_data.team_member4</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div> <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member5" required class="form-select" id="salutation">
+
+                                    <option hidden>@Model.team_data.team_member5</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member6" required class="form-select" id="salutation">
+
+                                    <option hidden>@Model.team_data.team_member6</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .containerbox {
+       
+        margin-top: 120px;
+        padding: 30px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    .modal-title {
+        padding: 10px;
+    }
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>

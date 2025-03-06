@@ -1,0 +1,124 @@
+﻿@model ISB.Models.mainModel;
+<div class="containerbox">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">update
+                        Survey</h5>
+                 
+                </div>
+                <div class="modal-body">
+                    <h6>Update Survey Details</h6>
+                    <form method="post"   enctype="multipart/form-data">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.survey_data.id" />
+                            <div class="col">
+                                <label for="employeeName" class="form-label">employees Name</label>
+                                <select name="emp_id" required class="form-select" id="salutation">
+
+                                 
+                                        @foreach(var data in Model.survey_details){
+                                        <option hidden value="@Model.survey_data.emp_id">
+                                            @data.employee_details.name
+                                        </option>
+                                            }
+}
+                                  
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                            <option required value=@data.id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Subject</label>
+                                <input type="text" value="@Model.survey_data.subject"  class="form-control" id="employeeName" name="subject" placeholder="e.g. John Doe" required>
+
+                            </div>
+
+                        </div>
+
+
+                    
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="employeeDescription" name="descriptions" placeholder="Write a description" rows="4" required>@Model.survey_data.descriptions</textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .containerbox {
+        margin-top: 120px;
+        padding: 30px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>
+

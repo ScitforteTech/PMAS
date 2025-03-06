@@ -1,0 +1,104 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+
+<div class="content" id="content">
+    <div class="title">Departments/Designation</div>
+
+    <div class="container text-end">
+      
+
+
+        <button class="btn btnbg" data-bs-toggle="modal" data-bs-target="#addEmployeeModals">Add Desgination</button>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Designation</th>
+                <th>Colour</th>
+                <th>Departments</th>
+
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model.design_details)
+            {
+                <tr>
+
+                    <td>@data.designation_name</td>
+                    <td><div class="" style="height:10px;background:@data.colour_code" ></div></td>
+                    <td>@data.depart_detail.department_name</td>
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                             <li><a href="@Url.Action("update_design","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</li>
+                            <li><a href="@Url.Action("delete_design","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+ 
+</div>
+
+
+
+<style>
+    .modal-dialog {
+        max-width: 400px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnbg {
+        background-color: #e83e8c;
+        color: white
+    }
+
+        .btnbg:hover {
+            background-color: #e83e8c;
+            color: white
+        }
+
+</style>

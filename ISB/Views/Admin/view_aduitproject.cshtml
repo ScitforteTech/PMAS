@@ -1,0 +1,93 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg8"] != null)
+{
+    <script>alert('@TempData["msg8"]');</script>
+}
+<div class="content" id="content">
+    <div class="bg-white shadow-md rounded-lg p-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="col-span-2">
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Project
+                    </h2>
+                    <p>
+                        @Model.project_data.name
+                    </p>
+                </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                      Status
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            <div class="circle" style="height: 10px,width: 10px,background-color: @Model.proStatus_data.colour, border-radius: 50%;"></div>
+                            @Model.proStatus_data.name_status
+                        </p>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Budget Adherence
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            <div class="circle" style="height: 10px,width: 10px,background-color: @Model.buget_data.colour, border-radius: 50%;"></div>
+                            @Model.buget_data.name
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Schedule Adherence
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            <div class="circle" style="height: 10px,width: 10px,background-color: @Model.scheduleAdherences_data.colour, border-radius: 50%;"></div>
+                            @Model.scheduleAdherences_data.name
+                        </p>
+                    </div>
+      
+
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Key Performance Indicators
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            @Model.auditproject_data.kips
+                        </p>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+
+                <div class="mt-4">
+                    <p>
+                        <strong>
+                            Start Date:
+                        </strong>
+                        @Model.auditproject_data.start_date
+                    </p>
+                    <p>
+                        <strong>
+                            Due Date:
+                        </strong>
+                        @Model.auditproject_data.end_date
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

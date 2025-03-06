@@ -1,0 +1,104 @@
+﻿@model ISB.Models.mainModel;
+
+<div id="content" class="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-2xl font-bold">Update  Audit Project</h5>
+                  
+                </div>
+                <div class="modal-body">
+                   
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.auditproject_data.id" />
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Project </label>
+                                <select name="Project_name" required class="form-select" id="salutation">
+
+                                    <option hidden value="@Model.auditproject_data.project_id">@Model.project_data.name</option>
+                                    @foreach (var data in Model.audit_datails)
+                                    {
+                                        <option value=@data.projectDetails.Project_id>@data.projectDetails.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Start Date</label>
+                                <input type="date" value="@Model.auditproject_data.start_date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="start_date" placeholder="e.g. John Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeName" class="form-label">End Date</label>
+                                <input type="date" value="@Model.auditproject_data.end_date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="end_date" placeholder="e.g. John Doe" required>
+                            </div>
+
+
+                            <div class="col">
+                                <label for="projectStatus" class="form-label">Project Status</label>
+                                <select name="project_Status" required class="form-select" id="projectStatus">
+                                    <option hidden value="@Model.auditproject_data.project_Status">@Model.proStatus_data.name_status</option>
+                                    @foreach (var data in Model.pro_Statusdetail)
+                                    {
+                                        <option value=@data.status_id>  @data.name_status</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                                <label for="priorityLevel" class="form-label">Budget </label>
+
+                                <select name="buget_id" required class="form-select" id="priorityLevel">
+                                    <option value="@Model.auditproject_data.buget_id">@Model.buget_data.name</option>
+                                    @foreach (var data in Model.buget_details)
+                                    {
+                                        <option value=@data.id>
+                                            @data.name
+                                        </option>
+                                    }
+                                </select>
+
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Schedule Adherence </label>
+                                <select name="schedule_id" required class="form-select" id="salutation">
+
+                                    <option value="@Model.auditproject_data.schedule_id">@Model.scheduleAdherences_data.name</option>
+                                    @foreach (var data in Model.scheduleAdherences)
+                                    {
+                                        <option value=@data.id>
+                                            @data.name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Key Performance Indicators </label>
+                                <textarea class="form-control" id="employeeName" name="kips" placeholder="write a Description" required>
+                              @Model.auditproject_data.kips      </textarea>
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

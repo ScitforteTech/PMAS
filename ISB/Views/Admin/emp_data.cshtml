@@ -1,0 +1,135 @@
+﻿@model ISB.Models.mainModel;
+<div class="content" id="content">
+
+
+    <!-- Content Section -->
+    <div class="row mb-4">
+        <!-- First Item -->   @foreach (var data in Model.employee_details)
+        {
+            <div class="col-6 d-flex align-items-center">
+                <div class="card p-3 border">
+
+                    <div class="d-flex">
+                        <div class="mr-5">
+                            <!-- Increased margin to add more space -->
+
+                            <img height="100px" width="100px" src="@Url.Content("~/emp_images/"+ data.iamge)" class="img-fluid" />
+                        </div>
+                        <div>
+                            <h5 class="card-title">Company</h5>
+                            <p class="card-text">
+
+
+                                <br />
+                                Last login at --
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <!-- Second Item -->
+        <div class="col-md-6 d-flex align-items-center">
+            <div class="card p-3 border">
+                <div class="d-flex">
+                    <div class="mr-5">
+                        <!-- Increased margin to add more space -->
+
+                        <img alt="Company Logo" src="https://placehold.co/100x100" class="img-fluid" />
+                    </div>
+                    <div>
+                        <h5 class="card-title">Company</h5>
+                        <p class="card-text">
+                            Created at --
+                            <br />
+                            Last login at --
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Third Item -->
+        <!-- <div class="col-md-4 d-flex align-items-center">
+        <div class="card p-3 border">
+        <div class="d-flex">
+        <div class="mr-5">
+        <img alt="Company Logo" src="https://placehold.co/100x100" class="img-fluid" />
+        </div>
+        <div>
+        <h5 class="card-title">Company</h5>
+        <p class="card-text">
+        Created at -- 05 Jul, 2024
+        <br />
+        Last login at --
+        </p>
+        </div>
+        </div>
+        </div>
+        </div> -->
+    </div>
+
+    <!-- Company Details with Right-aligned Answers -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                @foreach (var data in Model.employee_details)
+                {
+                    <div class="card-body">
+
+                        <h5 class="card-title">profile  Info</h5>
+                        <p><strong>Name:</strong> <span class="float-end">@data.name</span></p>
+                        <p><strong>Email:</strong> <span class="float-end">@data.email</span></p>
+                        <p><strong>Mobile:</strong> <span class="float-end">@data.mobile</span></p>
+                        <p>
+                            <strong>Date of Birth:</strong>
+                            <span class="float-end">@data.Dob</span>
+                        </p>
+                       
+                        <p><strong>Roles:</strong> <span class="float-end">@foreach (var daata in Model.role_detail) { 
+                        @daata.roles_name    
+                        }</span></p>
+                        <p>
+                            <strong>Department:</strong> <span class="float-end">
+                                @foreach (var daata in Model.department_details)
+                                {
+                                    @daata.department_name
+                                }
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Designation:</strong> <span class="float-end">
+                                @foreach (var daata in Model.design_details)
+                                {
+                                    @daata.designation_name
+                                }
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Employee Type</strong> <span class="float-end">
+                              @data.emplyoment_type
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Status:</strong> <span class="float-end">
+                                @if (data.status == 1)
+                                {
+                                    <span>Activate</span>
+                                }
+                                else
+                                {
+                                    <span>Inactivate</span>
+                                }
+                            </span>
+                        </p>
+                        <p>
+                            <strong>joining date:</strong> <span class="float-end">
+                              @data.joining_date
+                            </span>
+                        </p>
+                                           </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

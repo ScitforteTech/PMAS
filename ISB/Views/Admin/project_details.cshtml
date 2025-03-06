@@ -1,0 +1,262 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+<div class="content" id="content">
+
+    <div class="title">Projects</div>
+    <div class="search-bar">
+        <select>
+            <option value="all">All</option>
+        </select>
+        <form method="get" class="d-flex">
+            <input placeholder="Search" type="text" name="search_text" />
+            <button class="btn-search">Search</button>
+        </form>
+        <div class="container text-end">
+            <button class="btn btnadd" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Project</button>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                  Project Name
+                </th>
+                <th>
+                    Assigned To
+                </th>
+                <th>
+                  Start Date
+                </th>
+                <th>
+                  End Date
+                </th>
+                <th>Status</th>
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.project_details)
+            {
+                <tr>
+
+                    <td>@data.name</td>
+                    <td>@data.employee_details.name</td>
+                    <td>@data.start_date</td>
+                    <td>@data.end_date</td>
+
+
+
+                    <td>
+                        <a href="@Url.Content("~/documents/" + data.document)" target="_blank" download>
+                            Read Details
+                        </a>
+                
+
+                      </td>
+                    <td class="action"> 
+                        <i class="fas fa-ellipsis-v action-icon"></i> 
+                       <ul class="action-menu"> 
+                           <li><a href="@Url.Action("update_project","admin",new{id = data.Project_id})"><i class="fas fa-edit"></i>Edit</a></li>
+                            <li><a href="@Url.Action("update_prostatus","admin",new{id = data.Project_id})"><i class="fas fa-edit"></i>Status</a></li>
+                            <li><a href="@Url.Action("project_task","admin",new{id = data.Project_id})"><i class="fas fa-edit"></i>Status</a></li>
+                            <li><a href="@Url.Action("delete_project","admin",new{id = data.Project_id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>                                               
+    </table>
+
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Project</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Projects Details</h6>
+                    <form method="post" asp-action="add_project" asp-controller="admin" enctype="multipart/form-data">
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Project Name</label>
+                                <input type="text" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Client Name</label>
+                                <select name="client_id" required class="form-select" id="salutation">
+
+                                    <option hidden required>nothing selected.</option>
+                                    @foreach (var data in Model.client_details)
+                                    {
+                                        <option value=@data.id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Start Date</label>
+                                <input type="date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="start_date" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeName" class="form-label">End Date</label>
+                                <input type="date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="end_date" placeholder="e.g. John Doe" required>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                         
+                            <div class="col">
+                                <label for="projectStatus" class="form-label">Project Status</label>
+                                <select name="project_statuss" required class="form-select" id="projectStatus">
+                                    <option hidden>nothing selected</option>
+                                  @foreach(var data in Model.pro_Statusdetail){
+                                        <option value=@data.status_id>  @data.name_status</option>
+                                  }
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <label for="projectStatus" class="form-label">Project Type</label>
+                                <select name="project_types" required class="form-select" id="projectStatus">
+                                    <option hidden>nothing selectede</option>
+                                    @foreach (var data in Model.projects_types)
+                                    {
+                                        <option value=@data.id>  @data.project_typeName</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                               
+                                <label for="priorityLevel" class="form-label">Priority Level</label>
+                                <select name="project_priority" required class="form-select" id="priorityLevel">
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.projects_prioritesDetails)
+                                    {
+                                        <option value=@data.id>
+                                         @data.name
+                                        </option>
+                                    }
+                                </select>
+
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Assigned to </label>
+                                <select name="team_id" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.id>
+                                           @data.name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div> <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Document </label>
+                                <input type="file" name="document" class="form-control">
+                            </div>
+                           
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Description</label>
+                                <textarea class="form-control" id="employeeName" name="description" placeholder="write a Description" required>
+                                    </textarea>
+
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>

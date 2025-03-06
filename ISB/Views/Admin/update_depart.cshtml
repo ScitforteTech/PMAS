@@ -1,0 +1,65 @@
+﻿@model ISB.Models.mainModel;
+<div>
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Department</h5>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <h6>Department Details</h6>
+                        <input type="hidden" required name="id" value="@Model.department_data.id">
+
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Departments </label>
+                                <input type="text" required value="@Model.department_data.department_name" name="department_name" class="form-control" id="employeeName" placeholder="e.g. John Doe">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <input type="submit" class="btn btn-primary" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+</style>

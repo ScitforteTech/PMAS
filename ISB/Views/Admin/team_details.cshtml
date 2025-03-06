@@ -1,0 +1,262 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+<div class="content" id="content">
+
+    <div class="title">Team</div>
+    <div class="search-bar">
+        <select>
+            <option value="all">All</option>
+        </select>
+        <form method="get" class="d-flex">
+            <input placeholder="Search" type="text" name="search_text" />
+            <button class="btn-search">Search</button>
+        </form>
+        <div class="container text-end">
+            <button class="btn btnadd" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Team</button>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>
+                    Name
+                </th>
+                <th>
+                   lead/Manger
+                </th>
+                <th>Status</th>
+              
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.team_details)
+            {
+                <tr>
+
+                    <td>@data.team_name</td>
+                    <td>@data.team_leader</td>
+                    <td>@if(data.status==1){
+                    <span>Activate</span>
+                    }else{
+                            <span>Deactivate</span>
+                    }
+                    </td>
+
+             
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                            <li><a href="@Url.Action("update_team","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</a></li>
+                            <li><a href="@Url.Action("update_teamstatus","admin",new{id = data.id})"><i class="fas fa-edit"></i>Status</a></li>
+                            <li><a href="@Url.Action("delete_team","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Team</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Teams Details</h6>
+                    <form method="post" asp-action="add_team" asp-controller="admin" enctype="multipart/form-data">
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Team Name</label>
+                                <input type="text" class="form-control" id="employeeName" name="team_name" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Leader</label>
+                                <select name="team_leader" required class="form-select" id="salutation" >
+
+                                    <option hidden required>nothing selected.</option>
+                                  @foreach(var data in Model.employee_details){
+                                        <option value=@data.name>@data.name</option>
+                                  }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Team Description</label>
+                                <input type="text" class="form-control" id="employeeName" name="team_des" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Status</label>
+                                <select name="salutation" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                   <option value=1>Active</option>
+                                    <option value=0>Dective</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                            <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member1" required class="form-select" id="salutation">
+
+                                <option hidden>nothing selected.</option>
+                                @foreach (var data in Model.employee_details)
+                                {
+                                    <option value=@data.name>@data.name</option>
+                                }
+                            </select>
+                        </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member2" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member3" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member4" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div> <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member5" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Team Member </label>
+                                <select name="team_member6" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>

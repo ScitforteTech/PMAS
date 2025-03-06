@@ -1,0 +1,177 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+<div class="content" id="content">
+
+    <div class="title">Client</div>
+    <div class="search-bar">
+        <select>
+            <option value="all">All</option>
+        </select>
+        <form method="get" class="d-flex">
+            <input placeholder="Search" type="text" name="search_text" />
+            <button class="btn-search">Search</button>
+        </form>
+        <div class="container text-end">
+            <button class="btn btnadd" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Client</button>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>
+                    Name
+                </th>
+                <th>email</th>
+                <th>Number</th>
+                <th>Address</th>
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.client_details)
+            {
+                <tr>
+
+                    <td>@data.name</td>
+                    <td>@data.email</td>
+
+                    
+                    <td>@data.number</td>
+                    <td>@data.address</td>
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                          
+                            <li><a href="@Url.Action("update_client","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</li>
+                            <li><a href="@Url.Action("delete_client","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Account Details</h6>
+                    <form method="post" asp-action="add_client" asp-controller="admin" enctype="multipart/form-data">
+                        <div class="row">
+                          
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Client Name</label>
+                                <input type="text" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                            </div>
+                            </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Client Email</label>
+                                <input type="email" name="email" class="form-control" id="employeeEmail" placeholder="e.g. johndoe@example.com" required>
+                            </div>
+                          
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Client phone</label>
+                                @* <input type="text" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required> *@
+                                <input type="text" class="form-control" id="employeeNumber" name="number" placeholder="e.g. 033-XXX-XXXXX" pattern="[0-9]{0,11}" title="Please enter numbers only" required>
+                            </div>
+                        </div>
+                            <div class="row">
+                                <div class="col">
+                                <label for="employeeEmail" class="form-label">Client Address</label>
+                                <textarea class="form-control" id="employeeEmail" name="address"></textarea>
+                            </div>
+
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>

@@ -1,0 +1,111 @@
+﻿@model ISB.Models.mainModel;
+<div class="content" id="content" >
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-2xl font-bold">Add Risk Mangement</h5>
+                    
+                </div>
+                <div class="modal-body">
+                   
+                    <form method="post"  asp-controller="admin" enctype="multipart/form-data">
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Identified Risks</label>
+                                <textarea class="form-control" id="kips" name="IdentifiedRisks"
+                                          cols="30" rows="5" placeholder="Write about Identified Risks"></textarea>
+                            </div>
+
+
+                        </div>
+                        
+                            <div class="row">
+                                <div class="col">
+                                <label for="kips" class="form-label">Risk Mitigation Plans</label>
+                                <textarea class="form-control" id="kips" name="Risk_Mitigation_Plans"
+                                          cols="30" rows="5" placeholder="Write about Risk Mitigation Plans"></textarea>
+                                </div>
+                            </div>
+                      
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Stakeholder Engagement</label>
+                                <select name="Stakeholder_id" required class="form-select" id="salutation">
+
+                                    <option hidden required>nothing selected.</option>
+                                    @foreach (var data in Model.StakeholderEngagement_details)
+                                    {
+                                        <option value=@data.id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Communication Effectivenes</label>
+                                <select name="Effectiveness_id" required class="form-select" id="salutation">
+
+                                    <option hidden required>nothing selected.</option>
+                                    @foreach (var data in Model.Communication_Effectivenes_details)
+                                    {
+                                        <option value=@data.id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                                <label for="priorityLevel" class="form-label">Impact Risk</label>
+
+                                <select name="impact" required class="form-select" id="priorityLevel">
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.impact_Risks)
+                                    {
+                                        <option value=@data.risk_name>
+                                            @data.risk_name
+                                        </option>
+                                    }
+                                </select>
+
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Likelihood Risk </label>
+                                <select name="Likelihood" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.Likelihood_risk)
+                                    {
+                                        <option value=@data.risk_name>
+                                            @data.risk_name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Risk Scoring</label>
+                                <input class="form-control"  id="employeeName" name="Risk_Scoring" placeholder="Risk Scoring" >
+                                   
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

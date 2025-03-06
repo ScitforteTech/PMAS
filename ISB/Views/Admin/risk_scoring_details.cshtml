@@ -1,0 +1,18 @@
+﻿@model ISB.Models.mainModel;
+@{
+    Layout = null;
+}
+<div class="col">
+
+    <label for="employeeDescription" class="form-label">Impact Risk</label>
+    <select name="risk_category" required class="form-select" id="priorityLevel">
+
+        <option hidden>Select a Risk</option>
+       
+        @foreach (var data in Model.impact_Risks)
+        {
+            <option  value="@data.risk_name">@data.risk_name</option>
+        }
+    </select>
+</div>
+                       

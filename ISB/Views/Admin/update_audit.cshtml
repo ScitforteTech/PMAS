@@ -1,0 +1,134 @@
+﻿@model ISB.Models.mainModel;
+
+<div id="content" class="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="font-bold text-lg">Update Audit Details</h4>
+                </div>
+                <div class="modal-body">
+                    <h6>Audit Details</h6>
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.audit_data.id" />
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Tittle</label>
+                                <input type="text" value="@Model.audit_data.Tittle" class="form-control" id="employeeName" name="Tittle" placeholder="e.g. John Doe" required>
+                            </div>
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Due Date</label>
+                                <input type="date" value="@Model.audit_data.Due_Date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="employeeName" name="Due_Date" placeholder="e.g. John Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Project </label>
+                                <select name="project_id" required class="form-select" id="salutation">
+
+                                    <option value="@Model.audit_data.project_id">@Model.project_data.name</option>
+                                    @foreach (var data in Model.project_details)
+                                    {
+                                        <option value=@data.Project_id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="projectStatus" class="form-label">Task </label>
+                                <select name="task_id" required class="form-select" id="projectStatus">
+                               
+                                    <option value="@Model.audit_data.task_id">@Model.task_data.name</option>
+                                    @foreach (var data in Model.task_details)
+                                    {
+                                        <option value=@data.task_id>  @data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <label for="projectStatus" class="form-label">Auditor</label>
+                                <select name="assignedauditor" required class="form-select" id="projectStatus">
+                                   
+                                    <option value="@Model.audit_data.assignedauditor">@Model.employee_data.name</option>
+                                    @foreach (var data in Model.employee_details)
+                                    {
+                                        <option value=@data.id>  @data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                                <label for="priorityLevel" class="form-label">Priority Level</label>
+                                <select name="Priority_id" required class="form-select" id="priorityLevel">
+                                    <option value="@Model.audit_data.Priority_id">@Model.auditPrioritydata.name</option>
+                                    @foreach (var data in Model.auditPriorityDetails)
+                                    {
+                                        <option value=@data.id>
+                                            @data.name
+                                        </option>
+                                    }
+                                </select>
+
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Audit Type </label>
+                                <select name="Type_id" required class="form-select" id="salutation">
+                                    <option value="@Model.audit_data.Type_id">@Model.audittypedata.name</option>
+
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.audittype)
+                                    {
+                                        <option value=@data.id>
+                                            @data.name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Attachment</label>
+                                <input type="file" value="@Model.audit_data.Attachment" class="form-control" id="employeeName" name="Attachment" placeholder="write a Description"  />
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Audit Scope</label>
+                                <textarea class="form-control" id="employeeName" name="AuditScope" placeholder="Write a description" required rows="4" cols="50">@Model.audit_data.AuditScope</textarea>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Audit Objective</label>
+                                <textarea class="form-control" id="employeeName" name="AuditObjectives" placeholder="Write a description" required rows="4" cols="50">@Model.audit_data.AuditObjectives</textarea>
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Comments</label>
+                                <textarea class="form-control" id="employeeName" name="Comments" placeholder="Write a description" required rows="4" cols="50">@Model.audit_data.Comments</textarea>
+                                   
+                               
+
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-5">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

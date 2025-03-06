@@ -1,0 +1,189 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+
+<div class="content" id="content">
+    <div class="title">Departments/Designation</div>
+
+    <div class="container text-end">
+        <button class="btn btnbg" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Department</button>
+        
+
+        <button class="btn btnbg" data-bs-toggle="modal" data-bs-target="#addEmployeeModals">Add Desgination</button>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Departments</th>
+
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var data in Model.department_details)
+            {
+                <tr>
+
+                    <td>@data.department_name</td>
+
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                            <li><a href="@Url.Action("view_design","admin",new{id = data.id})"><i class="fa-solid fa-eye"></i>Designation</li>
+                            <li><a href="@Url.Action("update_depart","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</li>
+                            <li><a href="@Url.Action("delete_depart","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+        <div class="container mt-5">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add departments</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" enctype="multipart/form-data" asp-action="add_department" asp-controller="Admin">
+                        <div class="modal-body">
+                            <h6>Department Details</h6>
+
+                            <div class="row">
+
+                                <div class="col">
+                                    <label for="employeeName" class="form-label">Department</label>
+                                    <input type="text" required name="department_name" class="form-control" id="employeeName" placeholder="e.g. Account">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+
+                            <input type="submit" class="btn btn-primary" value="Save">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+<div class="modal fade" id="addEmployeeModals" tabindex="-1" aria-labelledby="addEmployeeModalLabels" aria-hidden="true">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Designation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-action="add_designation" asp-controller="Admin">
+                    <div class="modal-body">
+                        <h6> Details</h6>
+
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Designation</label>
+                                <input type="text" required name="designation_name" class="form-control" id="employeeName" placeholder="e.g. Account">
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Color Code</label>
+                                <input type="color"  required name="colour_code" class="form-control" id="employeeName">
+                            </div>
+                        </div>
+
+
+                    <div class="row">
+
+                        <div class="col">
+                            <label for="employeeName" class="form-label">Department</label>
+                            <select class="form-control" id="employeeName" required name="depart_id">
+                           <option hidden>Select department</option>
+                             @foreach(var data in Model.department_details)
+                             {
+
+                                    <option value="@data.id">@data.department_name</option>
+                             }
+                          </select>
+                        </div>
+                    </div>
+
+                    </div>
+           
+                    <div class="modal-footer">
+
+                        <input type="submit" class="btn btn-primary" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-dialog {
+        max-width: 400px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnbg {
+        background-color: rgb(0, 75, 216);
+        color:white
+    }
+
+    .btnbg:hover {
+            background-color: rgb(0, 75, 216);
+        color: white
+    }
+
+        
+
+
+</style>

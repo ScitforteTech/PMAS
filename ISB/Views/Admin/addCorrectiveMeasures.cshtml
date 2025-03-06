@@ -1,0 +1,48 @@
+﻿<div class="content" id="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-2xl font-bold">Add Corrective Measures</h5>
+                  
+                </div>
+                <div class="modal-body">
+                    <h6>Add Corrective Measures  Details</h6>
+                    <form method="post" asp-action="addCorrectiveMeasures" asp-controller="admin" enctype="multipart/form-data">
+          
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Improvement Suggestions</label>
+                                <textarea class="form-control" id="employeeName" name="ImprovementSuggestions" placeholder="write a Improvement Suggestions" required>
+                                    </textarea>
+
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Priority Level</label>
+                                <select name="priority_id" required class="form-select" id="salutation">
+
+                                    <option hidden required>nothing selected.</option>
+                                    @foreach (var data in Model.correctiveMeasures_PriorityDetails)
+                                    {
+                                        <option value=@data.id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+
+
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

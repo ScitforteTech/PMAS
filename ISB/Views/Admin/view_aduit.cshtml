@@ -1,0 +1,245 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg8"] != null)
+{
+    <script>alert('@TempData["msg8"]');</script>
+}
+<div class="content" id="content">
+    <div class="bg-white shadow-md rounded-lg p-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="col-span-2">
+             
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Project
+                    </h2>
+                    <p>
+                        @Model.project_data.name
+                    </p>
+                </div>
+                <div class="mb-4"> 
+                    <h2 class="text-lg font-semibold"> 
+                         Task 
+                     </h2> 
+                    <p> 
+                        @if (TempData["msg"]!=null){
+                             @TempData["msg"]
+                        }else{
+                            @Model.task_data.name
+                        }
+                   
+                     </p> 
+                 </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Priority
+                    </h2>
+                    <div class="d-flex"> 
+                        <p class="flex items-center"> 
+                           <div class="circle" style="height: 10px,width: 10px,background-color: @Model.auditPrioritydata.colour, border-radius: 50%;"></div> 
+                            @Model.auditPrioritydata.name
+                       </p> 
+                   </div> 
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Assigned To
+                    </h2>
+
+                    <div class="flex items-center"> 
+                         <img alt="Profile picture" class="w-8 h-8 rounded-full mr-2" height="30" src="@Url.Content("~/emp_images/"+Model.employee_data.iamge)" width="30" /> 
+                         <div> 
+                             <p> 
+                                 @Model.employee_data.name 
+
+                            </p> 
+
+                        </div> 
+                     </div>
+
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Audit Category
+                    </h2>
+                    <p>
+
+                        @Model.audittypedata.name
+                    </p>
+                </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                 Audit scope
+                    </h2>
+                    <p>@Model.audit_data.AuditScope</p>
+                </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Audit Objective
+                    </h2>
+                    <p>@Model.audit_data.AuditObjectives</p>
+                </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                      Comment
+                    </h2>
+                    <p>@Model.audit_data.Comments</p>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+            
+                <div class="mt-4">
+             
+                    <p>
+                        <strong>
+                            Due Date:
+                        </strong>
+                        @Model.audit_data.Due_Date
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+   
+</div>
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-lg">
+    <div class="border-b">
+        <ul class="flex">
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#" id="fileButton">
+                    Files
+                </a>
+            </li>
+       
+        </ul>
+    </div>
+    <div class="p-4" id="fileSection" style="display: none;">
+        <div class="flex items-start mb-4">
+            <div class="flex-1">
+                <div class="flex items-center mb-2">
+                    <h2 class="text-lg font-bold">Files</h2>
+
+                </div>
+             
+        </div>
+     </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        File Name
+                    </th>
+                  
+
+                    <th class="action">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model.audit_datails)
+                {
+                    
+                    <tr>
+                        <td>@data.Attachment</td>
+                       
+                        <td class="action">
+                            <i class="fas fa-ellipsis-v action-icon"></i>
+                            <ul class="action-menu">
+                                <li>
+                                        <a href="@Url.Content("~/documents/audit/"+data.Attachment)" download style="margin: 10px;">
+                                        <span>Download</span>
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                        <a href="@Url.Content("~/documents/audit/" + data.Attachment)" target="_blank" style="margin: 10px;">
+                                        <span>View</span>
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                </li>
+
+                             
+                            </ul>
+                        </td>
+                    </tr>
+                }
+
+               
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="p-4" id="timesheetSection" style="display: none;">
+        <div class="flex items-start mb-4">
+            <div class="flex-1">
+                <div class="flex items-center mb-2">
+                    <h2 class="text-lg font-bold">Files</h2>
+                </div>
+                <ul>
+                    <li>File 1</li>
+                    <li>File 2</li>
+                    <li>File 3</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+ 
+
+  
+</div>
+
+<script>
+    const fileButton = document.getElementById('fileButton');
+    const commentButton = document.getElementById('commentButton');
+    const fileSection = document.getElementById('fileSection');
+    const commentSection = document.getElementById('commentSection');
+    const noCommentFound = document.getElementById('noCommentFound');
+    const timesheet=document.getElementById("Timesheet");
+    const timesection=document.getElementById("timesheetSection");
+    const subTaskButton=document.getElementById("subTAskButton");
+    const subtasks_Section=document.getElementById("subtask_Section");
+    const history_button=document.getElementById("history_button");
+    const history_section=document.getElementById("history_section")
+    fileButton.addEventListener('click', () => {
+      fileSection.style.display = 'block';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="none";
+    });
+    timesheet.addEventListener('click', () => {
+      fileSection.style.display = 'none';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="block";
+      subtasks_Section.style.display="none";
+    });
+    commentButton.addEventListener('click', () => {
+      commentSection.style.display = 'block';
+      fileSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="none";
+    });
+    subTaskButton.addEventListener('click', () => {
+      fileSection.style.display = 'none';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="block";
+    });
+    history_button.addEventListener('click', () => {
+      fileSection.style.display = 'none';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="none";
+      history_section.style.display="block";
+    });
+</script>

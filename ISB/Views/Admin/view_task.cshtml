@@ -1,0 +1,446 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg8"] != null)
+{
+    <script>alert('@TempData["msg8"]');</script>
+}
+<div class="content" id="content">
+<div class="bg-white shadow-md rounded-lg p-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="col-span-2">
+                <div class="text-end">
+                 <a href="@Url.Action("sub_task","admin",new{id=Model.task_data.task_id})" class="btn btn-primary">Sub task</a>
+                </div>
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold">
+                    Project
+                </h2>
+                <p>
+                        @Model.project_data.name
+                </p>
+            </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Task
+                    </h2>
+                    <p>
+                        @Model.task_data.name
+                    </p>
+                </div>
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold">
+                    Priority
+                </h2>
+                <div class="d-flex">
+                        <p class="flex items-center">
+                            <div class="circle" style="  height: 10px,width: 10px,background-color: @Model.task_prioritesData.colour, border-radius: 50%;"></div>
+                            @Model.task_prioritesData.name
+                        </p>
+                </div>
+            </div>
+              
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold">
+                    Assigned To
+                </h2>
+
+                    <div class="flex items-center">
+                        <img alt="Profile picture" class="w-8 h-8 rounded-full mr-2" height="30" src="@Url.Content("~/emp_images/"+Model.employee_data.iamge)" width="30" />
+                        <div>
+                            <p>
+                                @Model.employee_data.name
+
+                            </p>
+
+                        </div>
+                    </div>
+
+            </div>
+          
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold">
+                    Task Category
+                </h2>
+                <p>
+
+                        @Model.task_typedata.name
+                </p>
+            </div>
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold">
+                    Description
+                </h2>
+                    @Model.task_data.description
+            </div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg shadow-md">
+            <div class="text-lg font-semibold flex items-center">
+                    <div class="circle" style="  height: 10px;width: 10px;background-color: @Model.task_statusdata.colour; border-radius: 50%;"></div>
+            <h4>@Model.task_statusdata.name</h4>
+                </div>
+            <div class="mt-4">
+                <p>
+                    <strong>
+                        Start Date:
+                    </strong>
+                  @Model.task_data.created_date
+                </p>
+                <p>
+                    <strong>
+                        Due Date:
+                    </strong>
+                        @Model.task_data.due_date
+                </p>
+              
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-lg">
+    <div class="border-b">
+        <ul class="flex">
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#" id="fileButton">
+                    Files
+                </a>
+            </li>
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#" id="subTAskButton">
+               Issue
+                </a>
+            </li>
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 border-b-2  hover:text-blue-500  hover:underline 2px" href="#" id="commentButton">
+                    Comment
+                </a>
+            </li>
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#" id="Timesheet">
+                    Timesheet
+                </a>
+            </li>
+
+
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#">
+                    Notes
+                </a>
+            </li>
+            <li class="mr-6">
+                <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#" id="history_button">
+                    History
+                </a>
+            </li>
+                <li class="mr-6">
+                    <a class="inline-block py-2 px-4 text-gray-600 hover:text-blue-500 hover:underline 2px" href="#" id="history_button">
+                      Corrective Measure
+                    </a>
+                </li>
+        </ul>
+    </div>
+        <div class="p-4" id="fileSection" style="display: none;">
+            <div class="flex items-start mb-4">
+                <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                        <h2 class="text-lg font-bold">Files</h2>
+
+                    </div>
+                    <div class="col-12">
+                        <form method="post" enctype="multipart/form-data" asp-action="add_file" asp-controller="admin">
+                            <input name="file_name" type="file" />
+                            <input type="hidden" name="task_ids" value="@Model.task_data.task_id" />
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            File Name
+                        </th>
+                        <th>
+                           Date
+                        </th>
+                      
+                        <th class="action">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model.files_details)
+                    {
+                        <tr>
+                            <td>@data.file_name</td>
+                            <td>@data.date</td>
+                            <td class="action">
+                                <i class="fas fa-ellipsis-v action-icon"></i>
+                                <ul class="action-menu">
+                                    <li>
+                                        <a href="@Url.Content("~/documents/"+data.file_name)" download style="margin: 10px;" >
+                                            <span>Download</span>
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Content("~/documents/" + data.file_name)" target="_blank" style="margin: 10px;" >
+                                            <span>View</span>
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="@Url.Action("delete_file","admin",new {ids=data.Id})" style="margin: 10px;" >
+                                            <span>Delete</span>
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    }
+
+                    @if (TempData["msg"] != null)
+                    {
+                        <tr>
+                            <td class="text-center" colspan="5">@TempData["msg"]</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+
+            @* @foreach (var data in Model.files_details) *@
+            @* { *@
+            @*     <div class="space-y-4 flex flex-wrap"> *@
+            @*         <a href="@Url.Content("~/documents/"+data.file_name)" download style="margin: 10px;" class="bg-green-600  text-gray-100 font-semibold py-2 px-4 rounded flex items-center justify-center space-x-2"> *@
+            @*             <span>Download</span> *@
+            @*             <i class="fas fa-download"></i> *@
+            @*         </a> *@
+            @*         <a href="@Url.Content("~/documents/" + data.file_name)" target="_blank" style="margin: 10px;" class="bg-blue-600 text-gray-100 font-semibold py-2 px-4 rounded flex items-center justify-center space-x-2"> *@
+            @*             <span>View</span> *@
+            @*             <i class="fa-solid fa-eye"></i> *@
+            @*         </a> *@
+            @*         <a href="@Url.Action("delete_file","admin",new {id=data.Id})"  style="margin: 10px;" class="bg-red-600 text-gray-100 font-semibold py-2 px-4 rounded flex items-center justify-center space-x-2"> *@
+            @*             <span>Delete</span> *@
+            @*             <i class="fa-regular fa-trash-can"></i> *@
+            @*         </a> *@
+            @*     </div> *@
+            @* } *@
+            @if (TempData["nofound"] != null)
+            {
+                <h6> @TempData["nofound"] </h6>
+            }
+        </div>
+
+    <div class="p-4" id="timesheetSection" style="display: none;">
+        <div class="flex items-start mb-4">
+            <div class="flex-1">
+                <div class="flex items-center mb-2">
+                    <h2 class="text-lg font-bold">Files</h2>
+                </div>
+                <ul>
+                    <li>File 1</li>
+                    <li>File 2</li>
+                    <li>File 3</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="p-4" id="subtask_Section" style="display: none;">
+        <div class="flex items-start mb-4">
+            <div class="flex-1">
+                <div class="flex items-center mb-2">
+                    <h2 class="text-lg font-bold">Sub Task</h2>
+                </div>
+                <form asp-action="add_subtask" asp-controller="admin" method="post">
+                        <input type="hidden" name="task_id" value="@Model.task_data.task_id" />
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="title">Title <span class="text-red-500">*</span></label>
+                            <input name="tittle" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" placeholder="Enter a task title">
+                    </div>
+                    <div class="flex flex-wrap -mx-2 mb-4">
+                        <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="start-date">Start Date</label>
+                                <input name="start_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="start-date" type="date" placeholder="Select Date">
+                        </div>
+                        <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="due-date">Due Date</label>
+                                <input name="due_date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="due-date" type="date" placeholder="Select Date">
+                        </div>
+                        <div class="w-full md:w-1/3 px-2">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="assigned-to">Assigned To</label>
+                                <select name="emp_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="assigned-to">
+                                <option hidden> Nothing selected</option>
+                                @foreach(var data in Model.employee_details){
+                                        <option value="@data.id"> @data.name</option>
+                                }
+                            </select>
+                        </div>
+                            <div class="w-full md:w-1/3 px-2">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="assigned-to">Risk Factor</label>
+                                <select name="risk_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="assigned-to">
+                                    <option hidden> Nothing selected</option>
+                                    @foreach (var data in Model.risk_details)
+                                    {
+                                        <option value="@data.id"> @data.Risk_factor</option>
+                                    }
+                                </select>
+                            </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="description">Description</label>
+                            <textarea name="discription" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description" rows="4" placeholder="Enter description"></textarea>
+                    </div>
+                    <div class="mb-4">
+                            <input name="files_upload" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="start-date" type="file" placeholder="Select Date">
+                        @* <a href="#" class="text-blue-500"><i class="fas fa-paperclip"></i> Upload File</a> *@
+                    </div>
+                    <div class="flex items-center justify-end items-center">
+
+                       
+                        <button  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+                  
+            </div>
+        </div>
+    </div>
+
+    <div class="p-4" id="commentSection" style="display: none;">
+        <div class="flex items-start mb-4">
+            @foreach(var data in Model.logined_user){
+                    <img alt="User avatar" class="rounded-full mr-4" height="40" src="@Url.Content("~/emp_images/"+data.iamge)" width="40" />
+            }
+            <form>
+            <div class="flex-1">
+                <div class="flex items-center mb-2">
+                </div>
+                <textarea class="w-full border border-gray-300 rounded p-2" rows="3"></textarea>
+            </div>
+        
+        <div class="flex justify-end space-x-4">
+         
+            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Submit
+            </button>
+        </div>
+        </form>
+
+            
+            <div class="flex">
+                <img alt="User profile picture" class="w-10 h-10 rounded-full mr-4" height="40" src="https://storage.googleapis.com/a1aa/image/Htnl1RxE9ZXWLKkHgM6DZPacv6WPlQo7Z47o637x_EI.jpg" width="40" />
+                <div class="flex-1">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <h3 class="font-semibold">
+                                Settos Majito
+                            </h3>
+                        </div>
+                        <span class="text-gray-500 text-sm">
+                            2h ago
+                        </span>
+                    </div>
+                    <p class="text-gray-700 mt-2">
+                        Tellus in hac habitasse platea dictumst vestibulum. Lectus nulla at volutpat diam ut venenatis tellus. Aliquam etiam erat velit scelerisque in dictum non consectetur. Sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec. Tellus cras adipiscing enim eu turpis egestas pretium aenean pharetra. Aliquam faucibus purus in massa,
+                    </p>
+
+                </div>
+
+            </div>
+    </div>
+    <div class="p-4" id="history_section" style="display: none;">
+        <div class="p-6">
+            <div class="flex items-start mb-4">
+                <img alt="Profile picture of Meerab Tahir" class="w-12 h-12 rounded-full mr-4" height="100" src="https://storage.googleapis.com/a1aa/image/FGi_P3ATD-DyiQtALgHDdY2gZuDvCNM12YqjJ0wqPI4.jpg" width="100" />
+                <div>
+                    <p class="text-gray-800">
+                        Task status changed by Meerab Tahir
+                    </p>
+                    <div class="flex items-center mt-1">
+                        <span class="bg-yellow-400 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                            To Do
+                        </span>
+                        <span class="text-gray-500 text-sm">
+                            08-02-2025 08:47 pm
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <img alt="Profile picture of Meerab Tahir" class="w-12 h-12 rounded-full mr-4" height="100" src="https://storage.googleapis.com/a1aa/image/FGi_P3ATD-DyiQtALgHDdY2gZuDvCNM12YqjJ0wqPI4.jpg" width="100" />
+                <div>
+                    <p class="text-gray-800">
+                        Task is created by Meerab Tahir
+                    </p>
+                    <div class="flex items-center mt-1">
+                        <span class="bg-red-500 text-white text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                            Incomplete
+                        </span>
+                        <span class="text-gray-500 text-sm">
+                            08-02-2025 08:47 pm
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+<script>
+    const fileButton = document.getElementById('fileButton');
+    const commentButton = document.getElementById('commentButton');
+    const fileSection = document.getElementById('fileSection');
+    const commentSection = document.getElementById('commentSection');
+    const noCommentFound = document.getElementById('noCommentFound');
+    const timesheet=document.getElementById("Timesheet");
+    const timesection=document.getElementById("timesheetSection");
+    const subTaskButton=document.getElementById("subTAskButton");
+    const subtasks_Section=document.getElementById("subtask_Section");
+    const history_button=document.getElementById("history_button");
+    const history_section=document.getElementById("history_section")
+    fileButton.addEventListener('click', () => {
+      fileSection.style.display = 'block';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="none";
+    });
+    timesheet.addEventListener('click', () => {
+      fileSection.style.display = 'none';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="block";
+      subtasks_Section.style.display="none";
+    });
+    commentButton.addEventListener('click', () => {
+      commentSection.style.display = 'block';
+      fileSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="none";
+    });
+    subTaskButton.addEventListener('click', () => {
+      fileSection.style.display = 'none';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="block";
+    });
+    history_button.addEventListener('click', () => {
+      fileSection.style.display = 'none';
+      commentSection.style.display = 'none';
+
+      timesection.style.display="none";
+      subtasks_Section.style.display="none";
+      history_section.style.display="block";
+    });
+</script>

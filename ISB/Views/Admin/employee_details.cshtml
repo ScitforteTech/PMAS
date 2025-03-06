@@ -1,0 +1,321 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+<div class="content" id="content">
+  
+    <div class="title">Employee</div>
+    <div class="search-bar">
+        <select>
+            <option value="all">All</option>
+        </select>
+        <form class="d-flex">
+            <input placeholder="Search" type="text" name="search_text" />
+            <button class="btn-search">Search</button>
+        </form>
+        <div class="container text-end">
+            <button class="btn btnadd" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Employee</button>
+        </div>
+    </div>
+
+  
+    <table class="table">
+        <thead>
+            <tr>
+                
+                <th>Name
+                </th>
+                <th>email</th>
+                <th>Status</th>
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.employee_details)
+            {
+                <tr>
+
+                    <td>@data.name</td>
+                    <td>@data.email</td>
+                    
+                    <td>
+                        @if (data.status == 1)
+                        {
+                            <span>Activate</span>
+                        }
+                        else
+                        {
+                            <span>Inactivate</span>
+                        }
+                    </td>
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                            <li>
+                                <a href="@Url.Action("emp_data","admin",new{id = data.id})">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </a>
+                            </li>
+                            <li><a href="@Url.Action("update_emp","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</li>
+                            <li><a href="@Url.Action("status_emp","admin",new{id = data.id})"><i class="fa-solid fa-toggle-on"></i>Status</a></li>
+                            <li><a href="@Url.Action("delete_emp","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+          
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Account Details</h6>
+                    <form method="post" asp-action="add_emp" asp-controller="admin" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="salutation" class="form-label">Salutation</label>
+                                <select name="salutation" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                    <option value="Mr">Mr.</option>
+                                    <option value="Ms">Ms.</option>
+                                    <option value="Mrs">Mrs.</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employeeName" class="form-label">Employee Name</label>
+                                <input type="text" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employeeEmail" class="form-label">Employee Email</label>
+                                <input type="email" name="email" class="form-control" id="employeeEmail" placeholder="e.g. johndoe@example.com" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="profilePicture" class="form-label">Profile Picture</label>
+                                
+                                    <input type="file" name="iamge" class="form-control" id="employeeEmail" placeholder="e.g. johndoe@example.com" required>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                       
+                            <div class="col-md-3">
+                                <label for="mobile" class="form-label">Mobile</label>
+                                <input type="text" name="mobile" class="form-control" id="mobile" placeholder="e.g. 1234567890" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" name="Dob">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employeeRole" class="form-label">Employee Roles</label>
+                                <select class="form-select" id="employeeRole" name="role_id">
+                                  
+                                    <option hidden>nothing selected.</option>
+                                    @foreach (var data in Model.role_detail)
+                                    {
+                                        <option value="@data.id">@data.roles_name</option>
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" id="gender" name="gender">
+                                     <option hidden>nothing selected.</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                       
+                            <div class="col-md-3">
+                                <label for="joiningDate" class="form-label">Joining Date</label>
+                                <input type="date" min="@DateTime.Now.ToString("yyyy-mm-dd")" class="form-control" id="joiningDate" name="joining_date">
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <label for="reportingTo" class="form-label">Reporting To</label>
+                                <input type="text" class="form-control" id="reportingTo">
+                            </div> -->
+                            <div class="col-md-3">
+                                <label for="department" class="form-label">Department</label>
+                              
+                                <select name="depart_id" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                @foreach(var data in Model.department_details){
+                                    <option value="@data.id">@data.department_name</option>
+                                }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="designation" class="form-label">Designation</label>
+                                <select name="designationid" required class="form-select" id="salutation">
+
+                                    <option hidden>nothing selected.</option>
+                                @foreach(var data in Model.design_details){
+                                    <option value="@data.id">@data.designation_name</option>
+                                }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- <div class="col-md-3">
+                                <label for="department" class="form-label">Department</label>
+                                <input type="text" class="form-control" id="department">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="designation" class="form-label">Designation</label>
+                                <input type="text" class="form-control" id="designation">
+                            </div> -->
+                            <!-- <div class="col-md-6">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address">
+                            </div> -->
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="about" class="form-label">About</label>
+                                <textarea class="form-control" name="about" id="about" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="about" class="form-label">Address</label>
+                                <textarea  name="address" class="form-control" id="about" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <h6 class="mt-4">Other Details</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Login Allowed?</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"  type="radio" name="login_allowed" id="loginYes" value=1 checked>
+                                        <label class="form-check-label" for="loginYes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="login_allowed" id="loginNo" value=0 >
+                                        <label class="form-check-label" for="loginNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Receive email notifications?</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="email_Notification" id="emailYes" value=1 checked>
+                                        <label class="form-check-label" for="emailYes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="email_Notification" id="emailNo" value=0 >
+                                        <label class="form-check-label" for="emailNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="employmentType" class="form-label">Employee Type</label>
+                                <select class="form-select" id="employmentType" name="emplyoment_type">
+                                    <option value="" hidden>nothing selected</option>
+                                    @foreach (var data in Model.emp_types_details)
+                                    {
+                                        <option value="@data.name">@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="maritalStatus" class="form-label">Marital Status</label>
+                                <select class="form-select" id="maritalStatus" name="marital_status">
+                                    <option hidden>nothing selected</option>
+                                  @foreach(var data in Model.materialStatus_details){
+                                        <option value="@data.name">@data.name</option>
+                                  }
+                                </select>
+                            </div>
+                        </div>
+                       
+                        <button type="submit" class="btn btn-primary w-100 mt-4">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+     .btnadd  {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btnadd:hover {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+</style>

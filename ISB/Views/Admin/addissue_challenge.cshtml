@@ -1,0 +1,72 @@
+﻿@model ISB.Models.mainModel;
+<div class="content" id="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-2xl font-bold">Add  Issues and Challenges  Details</h5>
+                  
+                </div>
+                <div class="modal-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">  Open Issue</label>
+
+		                           <textarea class="form-control" id="kips" name="kips" cols="30" rows="5" placeholder="Write about Open Issue" required></textarea>
+                           
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="kips" class="form-label">Key Performance Indicators</label>
+                                <textarea class="form-control" id="kips" name="kips" cols="30" rows="5" placeholder="Write a Key Performance Indicators" required></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">  Issue Severity</label>
+                                <select name="Issue_Severity" required class="form-select" id="salutation">
+
+                                    <option hidden required>nothing selected.</option>
+                                    @foreach (var data in Model.IssueSeverity_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">  Resolution Status</label>
+                                <select name="Resolution_Status" required class="form-select" id="salutation">
+
+                                    <option hidden required>nothing selected.</option>
+                                    @foreach (var data in Model.ResolutionStatus_details)
+                                    {
+                                        <option value=@data.name>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+           
+
+
+
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+   
+
+
+
+

@@ -1,0 +1,126 @@
+﻿@model ISB.Models.mainModel;
+
+<div class="content" id="content">
+
+    <div class="title">Audit Project</div>
+    <div class="search-bar">
+        <select>
+            <option value="all">All</option>
+        </select>
+        <form method="get" class="d-flex">
+            <input placeholder="Search" type="text" name="search_text" />
+            <button class="btn-search">Search</button>
+        </form>
+        <div class="container text-end">
+          
+            <a class="btn btnadd bg-blue-500 hover:bg-blue-700" href="@Url.Action("addproject_audit", "admin")">Add Audit Project</a>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Tittle
+                </th>
+                <th>
+                  start Date
+                </th>
+                <th>
+                    Due Date
+                </th>
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.auditproject_details)
+            {
+                <tr>
+
+                    <td>@data.project.name</td>
+                    <td>@data.start_date</td>
+                    <td>@data.end_date</td>
+
+
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                            <li><a href="@Url.Action("update_auditproject","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</a></li>
+                            <li><a href="@Url.Action("view_aduitproject","admin",new{id= data.id})"><i class="fa-solid fa-eye"></i>View</a></li>
+
+                            <li><a href="@Url.Action("delete_auditproject","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+<!-- Modal -->
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+    
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>

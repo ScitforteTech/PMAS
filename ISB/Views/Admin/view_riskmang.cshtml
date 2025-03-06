@@ -1,0 +1,71 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg8"] != null)
+{
+        <script>alert('@TempData["msg8"]');</script>
+}
+<div class="content" id="content">
+    <div class="bg-white shadow-md rounded-lg p-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="col-span-2">
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Identified Risks
+                    </h2>
+                    <p>
+                        @Model.riskmangament_data.IdentifiedRisks
+                    </p>
+                </div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Risk Scoring
+                    </h2>
+                    <p>
+                        @Model.riskmangament_data.Risk_Scoring
+                    </p>
+                </div>
+                
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Stakeholder Engagement
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            @Model.StakeholderEngagement_data.name
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Communication Effectiveness
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            @Model.Communication_Effectivenes_data.name
+                        </p>
+                    </div>
+
+
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="text-lg font-semibold">
+                        Risk Mitigation Plans
+                    </h2>
+                    <div class="d-flex">
+                        <p class="flex items-center">
+                            @Model.riskmangament_data.Risk_Mitigation_Plans
+                        </p>
+                    </div>
+
+
+                </div>
+
+            </div>
+       
+
+        </div>
+    </div>
+</div>

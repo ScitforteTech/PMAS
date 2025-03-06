@@ -1,0 +1,116 @@
+﻿@model ISB.Models.mainModel;
+
+<div class="containerbox">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+               
+                <div class="modal-body">
+                    <h5 class="modal-title">Update Client</h5>
+                    <form method="post">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.client_data.id" />
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Client Name</label>
+                                <input type="text" value="@Model.client_data.name" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Client Email</label>
+                                <input type="email" value="@Model.client_data.email" name="email" class="form-control" id="employeeEmail" placeholder="e.g. johndoe@example.com" required>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="employeeName" class="form-label">Client phone</label>
+                                @* <input type="text" class="form-control" id="employeeName" name="name" placeholder="e.g. John Doe" required> *@
+                                <input type="text" value="@Model.client_data.number" class="form-control" id="employeeNumber" name="number" placeholder="e.g. 033-XXX-XXXXX" pattern="[0-9]{0,11}" title="Please enter numbers only" required>
+                            </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Client Address</label>
+                                <textarea class="form-control" id="employeeEmail" name="address">@Model.client_data.address</textarea>
+                            </div>
+
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .containerbox {
+      
+        margin-top: 120px;
+    }
+    body {
+        background-color: #f8f9fa;
+    }
+
+    form {
+        padding: 10px;
+    }
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    .modal-title {
+        padding: 10px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>

@@ -1,0 +1,59 @@
+﻿@model ISB.Models.mainModel;
+<div class="content" id="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">update  Compliance and Standards</h5>
+                  
+                </div>
+                <div class="modal-body">
+              
+                    <form method="post"  enctype="multipart/form-data">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.ComplianceStandards_data.id" />
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Compliance Status </label>
+                                <select name="compliacne_id" required class="form-select" id="salutation">
+
+                                    <option hidden value="@Model.ComplianceStandards_data.compliacne_id">@Model.complianceStatus_data.name</option>
+                                    @foreach (var data in Model.complianceStatus_details)
+                                    {
+                                            <option value=@data.id>
+                                            @data.name
+                                            </option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Evidence </label>
+                                <input type="text" value="@Model.ComplianceStandards_data.Evidence" name="Evidence" class="form-control" id="employeeName" required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Findings</label>
+                                <textarea class="form-control" id="employeeName" name="Findings" required>
+                                    @Model.ComplianceStandards_data.Findings  </textarea>
+
+                            </div>
+                      </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

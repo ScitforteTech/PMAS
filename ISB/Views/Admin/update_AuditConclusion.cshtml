@@ -1,0 +1,55 @@
+﻿@model ISB.Models.mainModel;
+<div class="content" id="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-2xl font-bold">Update   Audit Conclusion  </h5>
+
+                </div>
+                <div class="modal-body">
+                    <h6>Add  Audit Conclusion    Details</h6>
+                    <form method="post"  enctype="multipart/form-data">
+                        <div class="row">
+                            <input type="hidden" name="id" value="@Model.Audit_Conclusion_Data.id" />
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Audit Rating</label>
+                                <select name="rating_id" required class="form-select" id="salutation">
+
+                                    <option hidden value="@Model.Audit_Conclusion_Data.rating_id">@Model.Audit_Rating_Data.name</option>
+                                    @foreach (var data in Model.Audit_Rating_Details)
+                                    {
+                                        <option value=@data.id>@data.name</option>
+                                    }
+                                </select>
+                            </div>
+
+                          
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Summary of Findings</label>
+                                <textarea class="form-control" id="employeeName" name="Summary_Findings" placeholder="write a Improvement Suggestions" required>
+                                  @Model.Audit_Conclusion_Data.Summary_Findings  </textarea>
+
+                            </div>
+                        </div>
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Date</label>
+                                <input type="date" value="@Model.Audit_Conclusion_Data.Date" class="form-control" id="employeeName" name="Date" placeholder="e.g. John Doe" required>
+
+                            </div>
+                        </div>
+
+
+
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

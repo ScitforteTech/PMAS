@@ -1,0 +1,166 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg1"] != null)
+{
+    <script>alert('@TempData["msg1"]');</script>
+}
+<div class="content" id="content">
+
+    <div class="title">Likehood Risk</div>
+    <div class="search-bar">
+        <select>
+            <option value="all">All</option>
+        </select>
+        <form method="get" class="d-flex">
+            <input placeholder="Search" type="text" name="search_text" />
+            <button class="btn-search">Search</button>
+        </form>
+        <div class="container text-end">
+            <button class="btn btnadd" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Risk</button>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>
+                    Risk Name
+                </th>
+
+                <th>Scoring</th>
+
+                <th class="action">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in Model.Likelihood_risk)
+            {
+                <tr>
+
+                    <td>@data.risk_name</td>
+
+                    <td>@data.scoring</td>
+
+
+
+                    <td class="action">
+                        <i class="fas fa-ellipsis-v action-icon"></i>
+                        <ul class="action-menu">
+                            <li><a href="@Url.Action("update_likehoodRisk","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</a></li>
+
+                            <li><a href="@Url.Action("delete_likehoodRisk","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+
+            @if (TempData["msg"] != null)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">@TempData["msg"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Risk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Add Likelihood  Risk Details</h6>
+                    <form method="post" asp-action="add_likelihoodRisk" asp-controller="admin" enctype="multipart/form-data">
+                        <div class="row">
+
+
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label"> Risk</label>
+                                <input type="text" class="form-control" id="employeeName" name="risk_name" placeholder="e.g. John Doe" required>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeDescription" class="form-label">Scoring</label>
+                                <input pattern="[0-9]{1,}" class="form-control" id="employeeDescription" name="scoring" placeholder="Write a scoring" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .modal-dialog {
+        max-width: 900px;
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-footer {
+        border-top: none;
+    }
+
+    .form-control {
+        margin-bottom: 1rem;
+    }
+
+    .form-check-inline {
+        margin-right: 1rem;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .modal-body {
+        background-color: #fff;
+    }
+
+    .modal-footer button {
+        width: 100px;
+    }
+
+    .btnadd {
+        padding: 10px 20px;
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .btnadd:hover {
+            padding: 10px 20px;
+            background-color: #e83e8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+</style>
+
+
