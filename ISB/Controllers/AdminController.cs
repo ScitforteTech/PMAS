@@ -48,7 +48,23 @@ namespace ISB.Controllers
 
         }
 
-
+        public IActionResult companyCreatetion()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
 
 
         [HttpPost]
