@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using SelectPdf;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ISB.Controllers
@@ -154,7 +156,8 @@ namespace ISB.Controllers
                 var company = _con.tbl_companies.Where(p => p.id == id).ToList();
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 mainModel data = new mainModel()
-                { companies_details = company,
+                {
+                    companies_details = company,
                     logined_user = logined_user,
                 };
                 return View(data);
@@ -191,7 +194,8 @@ namespace ISB.Controllers
                 var company = _con.tbl_companies.Find(id);
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 mainModel data = new mainModel()
-                { company_data = company,
+                {
+                    company_data = company,
                     logined_user = logined_user,
                 };
                 return View(data);
@@ -253,7 +257,9 @@ namespace ISB.Controllers
                 {
                     TempData["msg"] = $"sorry the record is not found {search_text} ";
                 }
-                mainModel data = new mainModel() { role_detail = roles,
+                mainModel data = new mainModel()
+                {
+                    role_detail = roles,
                     logined_user = logined_user
                 };
                 return View(data);
@@ -657,7 +663,8 @@ namespace ISB.Controllers
                 var depart_item = _con.tbl_departments.Where(p => p.id == data_emp.depart_id).ToList();
                 var desgni_item = _con.tbl_designations.Where(p => p.id == data_emp.designationid).ToList();
                 mainModel data = new mainModel()
-                { logined_user = logined_user,
+                {
+                    logined_user = logined_user,
                     employee_details = find_id,
                     role_detail = roles_item,
                     department_details = depart_item,
@@ -713,7 +720,8 @@ namespace ISB.Controllers
                 var _type = _con.tbl_emptypes.Where(p => p.status == 1).ToList();
 
                 mainModel data = new mainModel()
-                { logined_user = logined_user,
+                {
+                    logined_user = logined_user,
                     design_data = selected_design,
                     emp_types_details = _type,
                     department_data = selected_depart,
@@ -924,7 +932,7 @@ namespace ISB.Controllers
                 return RedirectToAction("login_form");
             }
 
-        
+
         }
         [HttpPost]
         public IActionResult update_team(team _team)
@@ -945,12 +953,12 @@ namespace ISB.Controllers
                 List<project> pro_data = new List<project>();
                 if (string.IsNullOrEmpty(search_text))
                 {
-                    pro_data = _con.tbl_projects.Include(p => p.employee_details).Include(p => p.status_details).ToList();
+                    pro_data = _con.tbl_projects.Include(p => p.employee_details).Include(p => p.status_details).Where(p => p.plan_id == 0).ToList();
                 }
 
                 else
                 {
-                    pro_data = _con.tbl_projects.FromSqlInterpolated($"select * from tbl_teams where team_name like '%'+ {search_text}+ '%'").Include(p => p.status_details).ToList();
+                    pro_data = _con.tbl_projects.FromSqlInterpolated($"select * from tbl_teams where team_name like '%'+ {search_text}+ '%'").Include(p => p.status_details).Where(p => p.plan_id == 0).ToList();
                 }
                 if (pro_data.Count == 0)
                 {
@@ -1010,7 +1018,7 @@ namespace ISB.Controllers
                 }
             }
             // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
-
+            pro.plan_id = 0;
             _con.tbl_projects.Add(pro);
             _con.SaveChanges();
             TempData["msg1"] = "The project is successfully updated now !";
@@ -1034,10 +1042,12 @@ namespace ISB.Controllers
         {
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
-            { var status = _con.tbl_projectStatus.ToList();
+            {
+                var status = _con.tbl_projectStatus.ToList();
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 mainModel data = new mainModel()
-                { pro_Statusdetail = status,
+                {
+                    pro_Statusdetail = status,
                     logined_user = logined_user,
                 };
                 return View(data);
@@ -1136,14 +1146,42 @@ namespace ISB.Controllers
             }
         }
         [HttpPost]
-        public IActionResult update_project(project_status _status)
+        public IActionResult update_project(project pro, IFormFile document)
         {
+            if (document != null) // Check if a file was actually uploaded
+            {
+                string file_extension = Path.GetExtension(document.FileName);
+                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt")
+                {
+                    Random ran = new Random();
+                    string fileNAme = Path.GetFileName(document.FileName);
+                    var R_num = ran.Next(0000, 9999).ToString();
+                    var name = fileNAme = R_num; // This line seems redundant; you're re-assigning fileNAme
+                    string file_name = name + file_extension;
+                    string filepath = Path.Combine(_evn.WebRootPath, "documents", file_name);
+                    using (FileStream fs = new FileStream(filepath, FileMode.Create)) // Use 'using' for proper disposal
+                    {
+                        document.CopyTo(fs);
+                    }
 
-            _con.tbl_projectStatus.Update(_status);
+                    pro.document = file_name; // Store the path in the project object
+                }
+                else
+                {
+                    TempData["msg1"] = "This type of file is not supported !";
+                    return RedirectToAction("project_details");
+                }
+            }
+            // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
+            pro.plan_id = 0;
+            _con.tbl_projects.Update(pro);
             _con.SaveChanges();
-            return RedirectToAction("project_status");
+            TempData["msg1"] = "The project is successfully updated now !";
+
+            return RedirectToAction("project_details");
 
         }
+
         public IActionResult updatestatus_statusProj(int id)
         {
 
@@ -1251,7 +1289,8 @@ namespace ISB.Controllers
 
                 var emp_details = _con.tbl_employee.ToList();
                 mainModel data = new mainModel()
-                { logined_user = logined_user,
+                {
+                    logined_user = logined_user,
                     impact_Risks = Impact_risk_data
                 };
                 return View(data);
@@ -1335,7 +1374,8 @@ namespace ISB.Controllers
 
                 var emp_details = _con.tbl_employee.ToList();
                 mainModel data = new mainModel()
-                { logined_user = logined_user,
+                {
+                    logined_user = logined_user,
                     Likelihood_risk = Likelihood_risk_data
                 };
                 return View(data);
@@ -1433,7 +1473,8 @@ namespace ISB.Controllers
                 return View(data);
 
             }
-            else {
+            else
+            {
                 return RedirectToAction("login_form");
             }
         }
@@ -1470,7 +1511,8 @@ namespace ISB.Controllers
                     impact_Risks = impact_risk,
                     Likelihood_risk = likelihood_liked
                 };
-                return View(data); }
+                return View(data);
+            }
             else
             {
                 return RedirectToAction("login_form");
@@ -1552,6 +1594,23 @@ namespace ISB.Controllers
             return RedirectToAction("project_type");
 
         }
+        public IActionResult project_typestatusUpdate(int id)
+        {
+            var find_id = _con.tbl_project_types.Find(id);
+            if (find_id.status == 1)
+            {
+                find_id.status = 0;
+            }
+            else
+            {
+                find_id.status = 1;
+
+            }
+            _con.SaveChanges();
+            return RedirectToAction("project_type");
+        }
+
+
         public IActionResult task_type()
         {
             var login = HttpContext.Session.GetString("user_session");
@@ -1572,7 +1631,21 @@ namespace ISB.Controllers
             }
 
         }
+        public IActionResult task_typestatusUpdate(int id)
+        {
+            var find_id = _con.tbl_task_types.Find(id);
+            if (find_id.status == 1)
+            {
+                find_id.status = 0;
+            }
+            else
+            {
+                find_id.status = 1;
 
+            }
+            _con.SaveChanges();
+            return RedirectToAction("task_type");
+        }
 
         [HttpPost]
         public IActionResult add_taskType(task_type _type)
@@ -1863,12 +1936,12 @@ namespace ISB.Controllers
                 List<task> task_data = new List<task>();
                 if (string.IsNullOrEmpty(search_text))
                 {
-                    task_data = _con.tbl_tasks.Include(p => p.emp_data).Include(a => a._status).ToList();
+                    task_data = _con.tbl_tasks.Include(p => p.emp_data).Include(a => a._status).Where(p => p.plan_id == 0).ToList();
                 }
 
                 else
                 {
-                    task_data = _con.tbl_tasks.FromSqlInterpolated($"select * from tbl_project_task  where name like '%'+ {search_text}+ '%'").Include(p => p.emp_data).Include(a => a._status).ToList();
+                    task_data = _con.tbl_tasks.FromSqlInterpolated($"select * from tbl_project_task  where name like '%'+ {search_text}+ '%'").Include(p => p.emp_data).Include(a => a._status).Where(p => p.plan_id == 0).ToList();
                 }
                 if (task_data.Count == 0)
                 {
@@ -1883,7 +1956,7 @@ namespace ISB.Controllers
                 var _risk = _con.tbl_risks.ToList();
                 mainModel data = new mainModel()
                 {
-                    logined_user=logined_user,
+                    logined_user = logined_user,
                     employee_details = emp,
                     risk_details = _risk,
                     task_details = task_data,
@@ -1895,11 +1968,11 @@ namespace ISB.Controllers
                 };
                 return View(data);
             }
-        
+
             else
             {
                 return RedirectToAction("login_form");
-             }
+            }
         }
         [HttpPost]
         public IActionResult add_Task(task _task, IFormFile document)
@@ -1932,6 +2005,7 @@ namespace ISB.Controllers
             // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
             _task.created_date = DateTime.Now.ToString();
             _task.updated_date = DateTime.Now.ToString();
+            _task.plan_id = 0;
             _con.tbl_tasks.Add(_task);
             _con.SaveChanges();
             TempData["msg1"] = "The Task is successfully updated now !";
@@ -1939,7 +2013,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_task(int id)
         {
-           var del=  _con.tbl_tasks.Find(id);
+            var del = _con.tbl_tasks.Find(id);
             _con.tbl_tasks.Remove(del);
             return RedirectToAction("task_details");
         }
@@ -1949,38 +2023,39 @@ namespace ISB.Controllers
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
-                var logined_user = _con.tbl_employee.Where(p => p.id ==int.Parse(login)).ToList();
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 var task_data = _con.tbl_tasks.Where(p => p.task_id == id).ToList();
                 var task_view = _con.tbl_tasks.Find(id);
                 var team_details = _con.tbl_teams.Where(p => p.status == 1).ToList();
                 var _emp = _con.tbl_employee.FirstOrDefault(p => p.id == task_view.employee_ids);
-               
+
                 var project_details = _con.tbl_projects.FirstOrDefault(p => p.Project_id == task_view.project_);
                 var _types = _con.tbl_task_types.FirstOrDefault(p => p.id == task_view.task_types);
                 var _status = _con.tbl_task_status.FirstOrDefault(p => p.id == task_view.task_statuss);
                 var _prority = _con.tbl_taskpriority.FirstOrDefault(p => p.id == task_view.task_priority);
                 var _risk = _con.tbl_risks.ToList();
-                var employe = _con.tbl_employee.Where(e=>e.status==1).ToList();
-                var _files=_con.tbl_taks_file.Where(u=>u.task_ids==id).ToList();
-                if (_files.Count == 0) {
+                var employe = _con.tbl_employee.Where(e => e.status == 1).ToList();
+                var _files = _con.tbl_taks_file.Where(u => u.task_ids == id).ToList();
+                if (_files.Count == 0)
+                {
                     TempData["nofound"] = "there is not any file is upload";
                 }
                 mainModel data = new mainModel()
                 {
                     logined_user = logined_user,
-                   employee_data=_emp,
-                 
+                    employee_data = _emp,
+
                     task_data = task_view,
                     risk_details = _risk,
-                    employee_details=employe,
+                    employee_details = employe,
                     task_details = task_data,
                     task_prioritesData = _prority,
                     task_typedata = _types,
                     task_statusdata = _status,
                     project_data = project_details,
                     team_details = team_details,
-                    files_details=_files
-                    
+                    files_details = _files
+
                 };
                 return View(data);
             }
@@ -1990,7 +2065,7 @@ namespace ISB.Controllers
             }
 
 
-       
+
 
         }
 
@@ -2001,9 +2076,6 @@ namespace ISB.Controllers
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
 
-
-
-                //_con.tbl_tasks.Find(task_id);
                 var task_datas = _con.tbl_tasks.Find(id);
                 var project = _con.tbl_projects.ToList();
                 var risk = _con.tbl_risks.ToList();
@@ -2027,7 +2099,7 @@ namespace ISB.Controllers
                     task_statusdata = status,
                     project_data = project_info,
                     risk_details = risk,
-                    logined_user=logined_user,
+                    logined_user = logined_user,
                     task_typedata = _typedata,
                     task_typedetails = type,
                     task_prioritesData = _priority_selected,
@@ -2075,6 +2147,10 @@ namespace ISB.Controllers
             // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
             _task.created_date = DateTime.Now.ToString();
             _task.updated_date = DateTime.Now.ToString();
+            if (_task.plan_id == 0)
+            {
+                _task.plan_id = 0;
+            }
             _con.tbl_tasks.Update(_task);
             _con.SaveChanges();
             TempData["msg1"] = "The Task is successfully updated now !";
@@ -2082,7 +2158,7 @@ namespace ISB.Controllers
         }
         // add_file
         [HttpPost]
-        public IActionResult add_file(int id,task_files _file,IFormFile file_name)
+        public IActionResult add_file(int id, task_files _file, IFormFile file_name)
         {
             string file_extension = Path.GetExtension(file_name.FileName);
             if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt")
@@ -2097,10 +2173,10 @@ namespace ISB.Controllers
                 {
                     file_name.CopyTo(fs);
                 }
-            
+
                 _file.date = DateTime.Now.Date.ToShortDateString();
-              
-                _file.file_name= file_names;
+
+                _file.file_name = file_names;
                 _con.tbl_taks_file.Add(_file);
                 _con.SaveChanges();
                 TempData["msg8"] = "The file is successfully updated now !";
@@ -2112,12 +2188,12 @@ namespace ISB.Controllers
                 return RedirectToAction("task_details");
             }
 
-           
+
 
         }
-        public  IActionResult delete_file(int ids)
+        public IActionResult delete_file(int ids)
         {
-            var del= _con.tbl_taks_file.Find(ids);
+            var del = _con.tbl_taks_file.Find(ids);
             _con.tbl_taks_file.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("view_task");
@@ -2131,7 +2207,7 @@ namespace ISB.Controllers
         }
         public IActionResult sub_task(int id)
         {
-            var sub_task = _con.tbl_subtask.Where(p => p.task_id == id).Include(p=>p.emp_details).Include(p => p.risl_details).Include(p => p.task_details).ToList();
+            var sub_task = _con.tbl_subtask.Where(p => p.task_id == id).Include(p => p.emp_details).Include(p => p.risl_details).Include(p => p.task_details).ToList();
             if (sub_task.Count == 0)
             {
                 TempData["msg"] = "There is not sub task ";
@@ -2164,7 +2240,8 @@ namespace ISB.Controllers
                 var emp_data = _con.tbl_employee.FirstOrDefault(r => r.id == sub_Taskdata.emp_id);
 
                 mainModel data = new mainModel
-                {logined_user=logined_user,
+                {
+                    logined_user = logined_user,
                     employee_details = emp,
                     risk_data = _risk_data,
                     risk_details = risk,
@@ -2201,14 +2278,14 @@ namespace ISB.Controllers
                     logined_user = logined_user,
                     materialStatus_details = status
                 };
-             
-             return View(data);
+
+                return View(data);
             }
             else
             {
                 return RedirectToAction("login_form");
             }
-          }
+        }
         [HttpPost]
         public IActionResult addmaritial_status(maritalStatus maritial_status)
         {
@@ -2218,7 +2295,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_maritalStatus(int id)
         {
-            var del= _con.tbl_maritalstatus.Find(id);
+            var del = _con.tbl_maritalstatus.Find(id);
             _con.tbl_maritalstatus.Remove(del);
 
             _con.SaveChanges();
@@ -2231,7 +2308,8 @@ namespace ISB.Controllers
             {
                 find_Id.status = 0;
             }
-            else {
+            else
+            {
                 find_Id.status = 1;
             }
             _con.SaveChanges();
@@ -2243,9 +2321,10 @@ namespace ISB.Controllers
             if (login != null)
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
-                 var find_id = _con.tbl_maritalstatus.Find(id);
+                var find_id = _con.tbl_maritalstatus.Find(id);
                 mainModel data = new mainModel
-                {logined_user=logined_user,
+                {
+                    logined_user = logined_user,
                     materialStatus_data = find_id
                 };
                 return View(data);
@@ -2274,7 +2353,7 @@ namespace ISB.Controllers
                     emp_types_details = types,
                     logined_user = logined_user,
                 };
-             return View(data);
+                return View(data);
             }
             else
             {
@@ -2323,7 +2402,7 @@ namespace ISB.Controllers
                     emp_types_data = find_id,
                     logined_user = logined_user,
                 };
-             return View(data);
+                return View(data);
             }
             else
             {
@@ -2337,8 +2416,8 @@ namespace ISB.Controllers
             _con.SaveChanges();
             return RedirectToAction("employee_type");
         }
-       
-       
+
+
         public IActionResult risk_typeDetails()
         {
             var login = HttpContext.Session.GetString("user_session");
@@ -2347,7 +2426,8 @@ namespace ISB.Controllers
                 var _riskType = _con.tbl_risk_types.ToList();
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 mainModel data = new mainModel
-                {logined_user=logined_user,
+                {
+                    logined_user = logined_user,
                     Risktypes_details = _riskType
                 };
                 if (_riskType.Count == 0)
@@ -2361,7 +2441,7 @@ namespace ISB.Controllers
             {
                 return RedirectToAction("login_form");
             }
- }
+        }
         public IActionResult add_riskType(risk_type _types)
         {
             _con.tbl_risk_types.Add(_types);
@@ -2403,7 +2483,7 @@ namespace ISB.Controllers
                     logined_user = logined_user,
                     Risktypes_data = find_id
                 };
-             return View(data);
+                return View(data);
             }
             else
             {
@@ -2428,7 +2508,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                  audittype=_AuditType
+                    audittype = _AuditType
                 };
                 if (_AuditType.Count == 0)
                 {
@@ -2443,7 +2523,7 @@ namespace ISB.Controllers
             }
         }
         [HttpPost]
-      public IActionResult add_AuditType(AuditType _auditType)
+        public IActionResult add_AuditType(AuditType _auditType)
         {
             _con.tbl_auditTypes.Add(_auditType);
             _con.SaveChanges();
@@ -2453,7 +2533,7 @@ namespace ISB.Controllers
 
         public IActionResult delete_auditType(int id)
         {
-           var del= _con.tbl_auditTypes.Find(id);
+            var del = _con.tbl_auditTypes.Find(id);
             _con.tbl_auditTypes.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("audit_typeDetails");
@@ -2484,7 +2564,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
                     logined_user = logined_user,
-                   audittypedata=find_id,
+                    audittypedata = find_id,
                 };
                 return View(data);
             }
@@ -2501,7 +2581,7 @@ namespace ISB.Controllers
             return RedirectToAction("audit_typeDetails");
         }
         public IActionResult audit_priority()
-          {
+        {
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
@@ -2530,7 +2610,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_auditpriority(int id)
         {
-           var del= _con.tbl_auditpriority.Find(id);
+            var del = _con.tbl_auditpriority.Find(id);
             _con.tbl_auditpriority.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("audit_priority");
@@ -2561,7 +2641,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
                     logined_user = logined_user,
-                auditPrioritydata=find_id
+                    auditPrioritydata = find_id
                 };
                 return View(data);
             }
@@ -2610,11 +2690,11 @@ namespace ISB.Controllers
                 {
                     logined_user = logined_user,
                     employee_details = emp,
-                  auditPriorityDetails=priority,
-                   audittype=type,
-                   task_details=task,
-                   audit_datails=audit_data,
-                  project_details = project_details,
+                    auditPriorityDetails = priority,
+                    audittype = type,
+                    task_details = task,
+                    audit_datails = audit_data,
+                    project_details = project_details,
                     team_details = team_details
                 };
                 return View(data);
@@ -2627,16 +2707,16 @@ namespace ISB.Controllers
 
 
         }
-       
+
         [HttpPost]
-        public IActionResult add_audit(Audit _audit,IFormFile Attachment)
+        public IActionResult add_audit(Audit _audit, IFormFile Attachment)
         {
-         
-            if (Attachment != null) 
+
+            if (Attachment != null)
             {
                 string file_extension = Path.GetExtension(Attachment.FileName);
-                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt" || file_extension== ".xlsx" ||file_extension==".png" || file_extension==".jpg" ||file_extension ==".jpeg")
-                 {
+                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt" || file_extension == ".xlsx" || file_extension == ".png" || file_extension == ".jpg" || file_extension == ".jpeg")
+                {
                     Random ran = new Random();
                     string fileNAme = Path.GetFileName(Attachment.FileName);
                     var R_num = ran.Next(0000, 9999).ToString();
@@ -2648,8 +2728,8 @@ namespace ISB.Controllers
                         Attachment.CopyTo(fs);
                     }
 
-                     _audit.Attachment= file_name;
-                   
+                    _audit.Attachment = file_name;
+
                 }
                 else
                 {
@@ -2663,11 +2743,11 @@ namespace ISB.Controllers
             TempData["msg1"] = "The audit is successfully added now !";
             return RedirectToAction("audit_details");
         }
-        
-        
+
+
         public IActionResult view_aduit(int id)
         {
-              var login = HttpContext.Session.GetString("user_session");
+            var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
@@ -2686,16 +2766,16 @@ namespace ISB.Controllers
                 var type = _con.tbl_auditTypes.FirstOrDefault(p => p.id == find_id.Type_id);
                 mainModel data = new mainModel()
                 {
-                    auditPrioritydata=prority,
-                    audittypedata=type,
+                    auditPrioritydata = prority,
+                    audittypedata = type,
                     logined_user = logined_user,
-                  audit_data=find_id,
-                  audit_datails=audit_data,
+                    audit_data = find_id,
+                    audit_datails = audit_data,
                     employee_data = emp,
-                    task_data=task,
-                    project_data =project,
-                  
-                  
+                    task_data = task,
+                    project_data = project,
+
+
                 };
                 return View(data);
             }
@@ -2708,7 +2788,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_audit(int id)
         {
-           var del= _con.tbl_audit.Find(id);
+            var del = _con.tbl_audit.Find(id);
             _con.tbl_audit.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("audit_details");
@@ -2733,17 +2813,17 @@ namespace ISB.Controllers
                 var type_list = _con.tbl_auditTypes.ToList();
                 mainModel data = new mainModel()
                 {
-                    employee_details=empList,
+                    employee_details = empList,
                     auditPrioritydata = prority,
                     audittypedata = type,
                     logined_user = logined_user,
                     audit_data = find_id,
                     employee_data = emp,
                     task_data = task,
-                    task_details=task_list,
-                    project_details=project_list,
-                    auditPriorityDetails=priority_list,
-                    audittype=type_list,
+                    task_details = task_list,
+                    project_details = project_list,
+                    auditPriorityDetails = priority_list,
+                    audittype = type_list,
                     project_data = project,
 
 
@@ -2789,9 +2869,9 @@ namespace ISB.Controllers
             _con.SaveChanges();
             TempData["msg1"] = "The audit is successfully updated now !";
             return RedirectToAction("audit_details");
-        
-    }
-      public IActionResult budget_details()
+
+        }
+        public IActionResult budget_details()
         {
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
@@ -2800,9 +2880,9 @@ namespace ISB.Controllers
                 var buget = _con.tbl_bugetaherence.ToList();
                 mainModel data = new mainModel()
                 {
-                   buget_details=buget,
+                    buget_details = buget,
                     logined_user = logined_user,
-                 
+
 
 
                 };
@@ -2825,7 +2905,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_budget(int id)
         {
-           var del= _con.tbl_bugetaherence.Find(id);
+            var del = _con.tbl_bugetaherence.Find(id);
             _con.tbl_bugetaherence.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("budget_details");
@@ -2856,7 +2936,7 @@ namespace ISB.Controllers
                 var findId = _con.tbl_bugetaherence.Find(id);
                 mainModel data = new mainModel()
                 {
-                   buget_data=findId,
+                    buget_data = findId,
                     logined_user = logined_user,
 
 
@@ -2886,7 +2966,7 @@ namespace ISB.Controllers
                 var schedule = _con.tbl_ScheduleAdherence.ToList();
                 mainModel data = new mainModel()
                 {
-                scheduleAdherences=schedule,
+                    scheduleAdherences = schedule,
                     logined_user = logined_user,
 
 
@@ -2938,11 +3018,11 @@ namespace ISB.Controllers
             if (login != null)
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
-           
+
                 var findId = _con.tbl_ScheduleAdherence.Find(id);
                 mainModel data = new mainModel()
                 {
-                 scheduleAdherences_data=findId,
+                    scheduleAdherences_data = findId,
                     logined_user = logined_user,
 
 
@@ -2974,29 +3054,30 @@ namespace ISB.Controllers
                 List<audit_Project> auditproject_data = new List<audit_Project>();
                 if (string.IsNullOrEmpty(search_text))
                 {
-                  auditproject_data = _con.tbl_auditProject.Include(p=>p.project).ToList();
+                    auditproject_data = _con.tbl_auditProject.Include(p => p.project).ToList();
                 }
 
                 else
                 {
-               
+
                 }
                 if (auditproject_data.Count == 0)
                 {
                     TempData["msg"] = $"sorry the record is not found {search_text} ";
                 }
-                var project = _con.tbl_audit.Include(a=>a.projectDetails).ToList();
-                var buget = _con.tbl_bugetaherence.Where(p=>p.status==1).ToList();
+                var project = _con.tbl_audit.Include(a => a.projectDetails).ToList();
+                var buget = _con.tbl_bugetaherence.Where(p => p.status == 1).ToList();
                 var schdelu = _con.tbl_ScheduleAdherence.Where(p => p.status == 1).ToList();
                 var ststus = _con.tbl_projectStatus.ToList();
                 mainModel data = new mainModel()
-                {audit_datails=project,
-                auditproject_details=auditproject_data,
+                {
+                    audit_datails = project,
+                    auditproject_details = auditproject_data,
                     logined_user = logined_user,
-                    scheduleAdherences=schdelu,
-                    buget_details=buget,
-                    pro_Statusdetail=ststus
-                   
+                    scheduleAdherences = schdelu,
+                    buget_details = buget,
+                    pro_Statusdetail = ststus
+
                 };
                 return View(data);
             }
@@ -3021,7 +3102,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
                     audit_datails = project,
-                    
+
                     logined_user = logined_user,
                     scheduleAdherences = schdelu,
                     buget_details = buget,
@@ -3058,19 +3139,20 @@ namespace ISB.Controllers
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 var find_id = _con.tbl_auditProject.Find(id);
-                
+
                 var project = _con.tbl_projects.FirstOrDefault(p => p.Project_id == find_id.project_id);
                 var status = _con.tbl_projectStatus.FirstOrDefault(a => a.status_id == find_id.project_Status);
                 var budget = _con.tbl_bugetaherence.FirstOrDefault(b => b.id == find_id.buget_id);
                 var sechulde = _con.tbl_ScheduleAdherence.FirstOrDefault(b => b.id == find_id.schedule_id);
                 mainModel data = new mainModel()
-                {scheduleAdherences_data=sechulde,
-                buget_data=budget,
-                proStatus_data=status,
-                project_data=project,
-                   auditproject_data=find_id,
+                {
+                    scheduleAdherences_data = sechulde,
+                    buget_data = budget,
+                    proStatus_data = status,
+                    project_data = project,
+                    auditproject_data = find_id,
                     logined_user = logined_user,
-                   
+
 
 
                 };
@@ -3107,7 +3189,7 @@ namespace ISB.Controllers
                     auditproject_data = find_id,
                     logined_user = logined_user,
                     audit_datails = projectlist,
-                  
+
                     scheduleAdherences = schdelu,
                     buget_details = buget,
                     pro_Statusdetail = ststus
@@ -3121,7 +3203,7 @@ namespace ISB.Controllers
             {
                 return RedirectToAction("login_form");
             }
-         
+
         }
         [HttpPost]
         public IActionResult update_auditproject(audit_Project _pro)
@@ -3138,11 +3220,11 @@ namespace ISB.Controllers
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
 
                 var stakeholder = _con.tbl_StakeholderEngagement.ToList();
-           
+
                 mainModel data = new mainModel()
                 {
-                   
-                  StakeholderEngagement_details=stakeholder,
+
+                    StakeholderEngagement_details = stakeholder,
                     logined_user = logined_user,
 
 
@@ -3199,7 +3281,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
 
-                   StakeholderEngagement_data=stakeholder,
+                    StakeholderEngagement_data = stakeholder,
                     logined_user = logined_user,
 
 
@@ -3225,7 +3307,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
 
-                    Communication_Effectivenes_details=effectvences,
+                    Communication_Effectivenes_details = effectvences,
                     logined_user = logined_user,
 
 
@@ -3273,7 +3355,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
 
-                   Communication_Effectivenes_data=_Effectivenes,
+                    Communication_Effectivenes_data = _Effectivenes,
                     logined_user = logined_user,
 
 
@@ -3305,7 +3387,7 @@ namespace ISB.Controllers
                 List<riskmangament> riskmangament_data = new List<riskmangament>();
                 if (string.IsNullOrEmpty(search_text))
                 {
-                    riskmangament_data = _con.tbl_riskmangament.Include(p=>p.Stakeholder_Engagement).Include(p => p.Effectiveness_Engagement).ToList();
+                    riskmangament_data = _con.tbl_riskmangament.Include(p => p.Stakeholder_Engagement).Include(p => p.Effectiveness_Engagement).ToList();
                 }
 
                 else
@@ -3316,19 +3398,19 @@ namespace ISB.Controllers
                 {
                     TempData["msg"] = $"sorry the record is not found {search_text} ";
                 }
-                var risk= _con.tbl_riskmangament.ToList();
+                var risk = _con.tbl_riskmangament.ToList();
                 var impactRisk = _con.tbl_impact_risk.ToList();
                 var likdelihoodRisk = _con.tbl_likedhood_risk.ToList();
                 var effetiveness = _con.tbl_CommunicationEffectiveness.Where(p => p.status == 1).ToList();
                 var stakholder = _con.tbl_StakeholderEngagement.Where(p => p.status == 1).ToList();
                 mainModel data = new mainModel()
                 {
-                    StakeholderEngagement_details=stakholder,
-                    Communication_Effectivenes_details=effetiveness,
-                    riskmangament_details=riskmangament_data,
+                    StakeholderEngagement_details = stakholder,
+                    Communication_Effectivenes_details = effetiveness,
+                    riskmangament_details = riskmangament_data,
                     impact_Risks = impactRisk,
 
-                    Likelihood_risk=likdelihoodRisk,
+                    Likelihood_risk = likdelihoodRisk,
                     logined_user = logined_user,
 
 
@@ -3357,7 +3439,7 @@ namespace ISB.Controllers
                 {
                     StakeholderEngagement_details = stakholder,
                     Communication_Effectivenes_details = effetiveness,
-                   
+
                     impact_Risks = impactRisk,
 
                     Likelihood_risk = likdelihoodRisk,
@@ -3376,16 +3458,16 @@ namespace ISB.Controllers
 
         }
         [HttpPost]
-        public  IActionResult addRisk_Mangement(riskmangament _risk)
+        public IActionResult addRisk_Mangement(riskmangament _risk)
         {
-            
+
             _con.tbl_riskmangament.Add(_risk);
             _con.SaveChanges();
             return RedirectToAction("risk_mangamentDetails");
         }
         public IActionResult delete_riskmang(int id)
         {
-           var del= _con.tbl_riskmangament.Find(id);
+            var del = _con.tbl_riskmangament.Find(id);
             _con.tbl_riskmangament.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("risk_mangamentDetails");
@@ -3403,8 +3485,8 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
                     riskmangament_data = find_id,
-                    Communication_Effectivenes_data=effetivencess,
-                    StakeholderEngagement_data=stakeholder,
+                    Communication_Effectivenes_data = effetivencess,
+                    StakeholderEngagement_data = stakeholder,
                     logined_user = logined_user,
 
                 };
@@ -3435,7 +3517,7 @@ namespace ISB.Controllers
                 {
                     StakeholderEngagement_details = stakholder,
                     Communication_Effectivenes_details = effetiveness,
-                   
+
                     impact_Risks = impactRisk,
 
                     Likelihood_risk = likdelihoodRisk,
@@ -3450,7 +3532,7 @@ namespace ISB.Controllers
 
             else
             {
-                return RedirectToAction("login_form");                
+                return RedirectToAction("login_form");
             }
         }
         [HttpPost]
@@ -3471,7 +3553,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                  complianceStatus_details=status,
+                    complianceStatus_details = status,
                 };
 
                 return View(data);
@@ -3511,7 +3593,7 @@ namespace ISB.Controllers
             _con.SaveChanges();
             return RedirectToAction("complianceStatusDetails");
         }
-    
+
         public IActionResult update_complienceStatus(int id)
         {
             var login = HttpContext.Session.GetString("user_session");
@@ -3522,7 +3604,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                   complianceStatus_data=find_id,
+                    complianceStatus_data = find_id,
                 };
                 return View(data);
             }
@@ -3538,20 +3620,20 @@ namespace ISB.Controllers
             _con.SaveChanges();
             return RedirectToAction("complianceStatusDetails");
         }
-       public IActionResult ComplianceStandardsDetails()
+        public IActionResult ComplianceStandardsDetails()
         {
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
 
-                var standard = _con.tbl_complianceandStandards.Include(a=>a.status).ToList();
+                var standard = _con.tbl_complianceandStandards.Include(a => a.status).ToList();
                 var status = _con.tbl_compliancestatus.Where(p => p.status == 1).ToList();
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                    complianceStatus_details=status,
-                   ComplianceStandards_details=standard
+                    complianceStatus_details = status,
+                    ComplianceStandards_details = standard
                 };
 
                 return View(data);
@@ -3585,7 +3667,7 @@ namespace ISB.Controllers
             }
         }
         [HttpPost]
-        public IActionResult addComplianceStandards(ComplianceStandards _standard,IFormFile Evidence)
+        public IActionResult addComplianceStandards(ComplianceStandards _standard, IFormFile Evidence)
         {
             if (Evidence != null)
             {
@@ -3594,11 +3676,11 @@ namespace ISB.Controllers
                 {
                     Random ran = new Random();
                     string fileNAme = Path.GetFileName(Evidence.FileName);
-                 
+
                     string filepath = Path.Combine(_evn.WebRootPath, "documents/Evidence", fileNAme);
                     using (FileStream fs = new FileStream(filepath, FileMode.Create)) // Use 'using' for proper disposal
                     {
-                       Evidence.CopyTo(fs);
+                        Evidence.CopyTo(fs);
                     }
 
                     _standard.Evidence = fileNAme;
@@ -3611,7 +3693,7 @@ namespace ISB.Controllers
                 }
             }
 
-           
+
 
             _con.tbl_complianceandStandards.Add(_standard);
             _con.SaveChanges();
@@ -3627,7 +3709,7 @@ namespace ISB.Controllers
         }
         public IActionResult update_complianceStandard(int id)
         {
-                var login = HttpContext.Session.GetString("user_session");
+            var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
@@ -3638,8 +3720,8 @@ namespace ISB.Controllers
                 {
                     logined_user = logined_user,
                     complianceStatus_details = status,
-                    ComplianceStandards_data=find_id,
-                   complianceStatus_data=selected_status,
+                    ComplianceStandards_data = find_id,
+                    complianceStatus_data = selected_status,
                 };
                 return View(data);
             }
@@ -3692,7 +3774,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                 IssueSeverity_details=IssueSeverity,
+                    IssueSeverity_details = IssueSeverity,
                 };
 
                 return View(data);
@@ -3714,7 +3796,7 @@ namespace ISB.Controllers
         {
             var del = _con.tbl_issueSeverity.Find(id);
             _con.tbl_issueSeverity.Remove(del);
-             _con.SaveChanges();
+            _con.SaveChanges();
             return RedirectToAction("IssueSeverityDetails");
         }
         public IActionResult issueStatusUpdate(int id)
@@ -3741,7 +3823,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                   IssueSeverity_data=find_id,
+                    IssueSeverity_data = find_id,
                 };
                 return View(data);
             }
@@ -3768,7 +3850,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                 ResolutionStatus_details=status
+                    ResolutionStatus_details = status
                 };
 
                 return View(data);
@@ -3810,7 +3892,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel
                 {
                     logined_user = logined_user,
-                    ResolutionStatus_data=find_id,
+                    ResolutionStatus_data = find_id,
                 };
                 return View(data);
             }
@@ -3839,16 +3921,16 @@ namespace ISB.Controllers
             if (login != null)
             {
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
-                var issue=_con.tbl_issue.ToList();
+                var issue = _con.tbl_issue.ToList();
                 var res = _con.tbl_ResolutionStatus.Where(p => p.status == 1).ToList();
                 var sov_issue = _con.tbl_issueSeverity.Where(p => p.status == 1).ToList();
                 mainModel data = new mainModel
                 {
-                    IssueSeverity_details=sov_issue,
-                    ResolutionStatus_details=res,
-                    issues_Detail=issue,
+                    IssueSeverity_details = sov_issue,
+                    ResolutionStatus_details = res,
+                    issues_Detail = issue,
                     logined_user = logined_user,
-                  
+
                 };
                 return View(data);
             }
@@ -3909,7 +3991,7 @@ namespace ISB.Controllers
                 {
                     IssueSeverity_details = sov_issue,
                     ResolutionStatus_details = res,
-                    issues_Data=issue,
+                    issues_Data = issue,
                     logined_user = logined_user,
 
                 };
@@ -3938,7 +4020,7 @@ namespace ISB.Controllers
 
                 mainModel data = new mainModel()
                 {
-                   correctiveMeasures_PriorityDetails=priority,
+                    correctiveMeasures_PriorityDetails = priority,
                     logined_user = logined_user,
                 };
                 return View(data);
@@ -3990,7 +4072,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
                     logined_user = logined_user,
-                  correctiveMeasures_PriorityData=find_id
+                    correctiveMeasures_PriorityData = find_id
                 };
                 return View(data);
             }
@@ -4012,14 +4094,14 @@ namespace ISB.Controllers
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
-                var priority = _con.tbl_measurePrority.Where(a=>a.status==1).ToList();
+                var priority = _con.tbl_measurePrority.Where(a => a.status == 1).ToList();
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 var corretiveMeasure = _con.tbl_auditCorrectiveMeasures.ToList();
                 mainModel data = new mainModel()
                 {
                     correctiveMeasures_PriorityDetails = priority,
                     logined_user = logined_user,
-                    correctiveMeasures_Details=corretiveMeasure,
+                    correctiveMeasures_Details = corretiveMeasure,
                 };
                 return View(data);
             }
@@ -4058,7 +4140,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_auditmeasure(int id)
         {
-           var del= _con.tbl_auditCorrectiveMeasures.Find(id);
+            var del = _con.tbl_auditCorrectiveMeasures.Find(id);
             _con.tbl_auditCorrectiveMeasures.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("CorrectiveMeasures_Details");
@@ -4097,7 +4179,7 @@ namespace ISB.Controllers
                 var rating = _con.tbl_auditRating.ToList();
                 mainModel data = new mainModel()
                 {
-                    Audit_Rating_Details=rating,
+                    Audit_Rating_Details = rating,
                     correctiveMeasures_PriorityDetails = priority,
                     logined_user = logined_user,
                 };
@@ -4151,7 +4233,7 @@ namespace ISB.Controllers
                 mainModel data = new mainModel()
                 {
                     logined_user = logined_user,
-                  Audit_Rating_Data=find_id,
+                    Audit_Rating_Data = find_id,
                 };
                 return View(data);
             }
@@ -4172,15 +4254,15 @@ namespace ISB.Controllers
             var login = HttpContext.Session.GetString("user_session");
             if (login != null)
             {
-                var conlusion = _con.tblaudit_Conclusions.Include(o=>o._Rating).ToList();
+                var conlusion = _con.tblaudit_Conclusions.Include(o => o._Rating).ToList();
                 var audit_rating = _con.tbl_auditRating.Where(p => p.status == 1).ToList();
 
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 mainModel data = new mainModel()
                 {
-                    Audit_Rating_Details=audit_rating,
+                    Audit_Rating_Details = audit_rating,
                     logined_user = logined_user,
-              Audit_Conclusion_Details=conlusion,
+                    Audit_Conclusion_Details = conlusion,
                 };
                 return View(data);
             }
@@ -4191,7 +4273,7 @@ namespace ISB.Controllers
         }
         public IActionResult delete_AuditConclusion(int id)
         {
-           var del= _con.tblaudit_Conclusions.Find(id);
+            var del = _con.tblaudit_Conclusions.Find(id);
             _con.tblaudit_Conclusions.Remove(del);
             _con.SaveChanges();
             return RedirectToAction("auditConclusion");
@@ -4233,15 +4315,15 @@ namespace ISB.Controllers
                 var conlusion = _con.tblaudit_Conclusions.Include(o => o._Rating).ToList();
                 var audit_rating = _con.tbl_auditRating.Where(p => p.status == 1).ToList();
                 var find_id = _con.tblaudit_Conclusions.Find(id);
-                var rating = _con.tbl_auditRating.FirstOrDefault(p=>p.id==find_id.rating_id);
+                var rating = _con.tbl_auditRating.FirstOrDefault(p => p.id == find_id.rating_id);
                 var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
                 mainModel data = new mainModel()
                 {
-                    Audit_Conclusion_Data=find_id,
+                    Audit_Conclusion_Data = find_id,
                     Audit_Rating_Details = audit_rating,
                     logined_user = logined_user,
                     Audit_Conclusion_Details = conlusion,
-                    Audit_Rating_Data=rating,
+                    Audit_Rating_Data = rating,
                 };
                 return View(data);
             }
@@ -4257,10 +4339,800 @@ namespace ISB.Controllers
             _con.SaveChanges();
             return RedirectToAction("auditConclusion");
         }
+        [HttpGet]
+        public IActionResult docs_details()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var docs = _con.tbl_docs.Where(d => d.user_id == int.Parse(login)).ToList();
+                if (docs.Count == 0)
+                {
+                    TempData["msg"] = "There is no document";
+                }
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    Docs_Details = docs,
+                    logined_user = logined_user
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
+        public IActionResult add_Document()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var docs = _con.tbl_docs.ToList();
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    Docs_Details = docs,
+                    logined_user = logined_user
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+        }
+        [HttpPost]
+        public IActionResult add_Document(Docs _docs)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            _docs.user_id = int.Parse(login);
+            _con.tbl_docs.Add(_docs);
+            _con.SaveChanges();
+            TempData["msg"] = "The document is added successfully";
+            return RedirectToAction("add_Document");
+        }
+        public IActionResult delete_doc(int id)
+        {
+            var del = _con.tbl_docs.Find(id);
+            _con.tbl_docs.Remove(del);
+            _con.SaveChanges();
+            return RedirectToAction("docs_details");
+        }
+        public IActionResult update_doc(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var docs = _con.tbl_docs.Find(id);
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    Doc_Data = docs,
+                    logined_user = logined_user
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
+        [HttpPost]
+        public IActionResult update_doc(Docs _docs)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            _docs.user_id = int.Parse(login);
+            _con.tbl_docs.Update(_docs);
+            _con.SaveChanges();
+            return RedirectToAction("docs_details");
+        }
+        public IActionResult doc_pdf(int id)
+        {
+            HtmlToPdf Docs_pdf = new HtmlToPdf();
+            var find = _con.tbl_docs.Find(id);
+            string doc_pdf = System.IO.File.ReadAllText(_evn.WebRootPath + "/htmlpage.html");
+            Docs _doc = new Docs();
+            _doc.Tittle = find.Tittle;
+            _doc.Desciprtion = find.Desciprtion;
+            doc_pdf = doc_pdf.Replace("{{tittle}}", _doc.Tittle);
+            doc_pdf = doc_pdf.Replace("{{Desciprtion}}", _doc.Desciprtion);
+
+            PdfDocument pdf = Docs_pdf.ConvertHtmlString(doc_pdf);
+            var btyes = pdf.Save();
+
+            return File(btyes, "application/pdf", find.Tittle + ".pdf");
+        }
+        [HttpPost]
+        public IActionResult Duplicate_docs(int id)
+        {
+            var duplicatedDoc = _con.tbl_docs.Find(id);
+            if (duplicatedDoc != null)
+            {
+
+                var newDoc = new Docs
+                {
+                    Tittle = duplicatedDoc.Tittle,
+                    Desciprtion = duplicatedDoc.Desciprtion
+
+                };
+                _con.tbl_docs.Add(newDoc);
+                _con.SaveChanges();
+
+                return RedirectToAction("docs_details");
+            }
+
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult Fav_docs(int id, doc_favourite _docs)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            var find_id = _con.tbl_docs.Find(id);
+            var fav_data = _con.tbl_favdocs.FirstOrDefault(p => p.doc_id == find_id.id);
+            if (login != null && fav_data == null)
+            {
+                _docs.doc_id = find_id.id;
+                _docs.user_id = int.Parse(login);
+                _con.tbl_favdocs.Add(_docs);
+                _con.SaveChanges();
+                TempData["msg1"] = "the document is added to favourite successfully";
+            }
+            else
+            {
+                TempData["msg1"] = "the document is  already added to favourite successfully";
+            }
+            return RedirectToAction("docs_details");
+        }
+        public IActionResult plan_typeDetails()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var type = _con.tbl_plantypes.ToList();
+                if (type.Count == 0)
+                {
+                    TempData["msg"] = "any plan type is doesnot found";
+                }
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    planType_Details = type,
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+        }
+        [HttpPost]
+        public IActionResult add_planType(plan_types _types)
+        {
+            _con.tbl_plantypes.Add(_types);
+            _con.SaveChanges();
+            return RedirectToAction("plan_typeDetails");
+        }
+        public IActionResult delete_plantype(int id)
+        {
+            var del = _con.tbl_plantypes.Find(id);
+            _con.tbl_plantypes.Remove(del);
+            _con.SaveChanges();
+            return RedirectToAction("plan_typeDetails");
+        }
+        public IActionResult update_plantype(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var find_id = _con.tbl_plantypes.Find(id);
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    planType_Data = find_id,
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
+        [HttpPost]
+        public IActionResult update_plantype(plan_types _types)
+        {
+            _con.tbl_plantypes.Update(_types);
+            _con.SaveChanges();
+            return RedirectToAction("plan_typeDetails");
+        }
+        public IActionResult plan_typestatusUpdate(int id)
+        {
+            var find_id = _con.tbl_plantypes.Find(id);
+            if (find_id.status == 1)
+            {
+                find_id.status = 0;
+            }
+            else
+            {
+                find_id.status = 1;
+
+            }
+            _con.SaveChanges();
+            return RedirectToAction("plan_typeDetails");
+        }
+        public IActionResult plan_details()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var plan_data = _con.tbl_plan.Include(e => e._team).ToList();
+                if (plan_data.Count == 0)
+                {
+                    TempData["msg"] = "No plan is found.";
+                }
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    plan_Details = plan_data,
+
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+        }
+        public IActionResult add_plan()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var team = _con.tbl_teams.Where(e => e.status == 1).ToList();
+                var type = _con.tbl_plantypes.Where(e => e.status == 1).ToList();
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+
+                mainModel data = new mainModel()
+                {
+                    team_details = team,
+                    planType_Details = type,
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
+        [HttpPost]
+        public IActionResult add_plan(plan _plan)
+        {
+
+            TempData["msg1"] = "the plan is added successfully";
+            _con.tbl_plan.Add(_plan);
+            _con.SaveChanges();
+            return RedirectToAction("plan_details");
+        }
+        public IActionResult delete_plan(int id)
+        {
+            var del = _con.tbl_plan.Find(id);
+            _con.tbl_plan.Remove(del);
+            _con.SaveChanges();
+            return RedirectToAction("plan_details");
+
+        }
+        public IActionResult update_plan(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var find_id = _con.tbl_plan.Find(id);
+                var team = _con.tbl_teams.Where(e => e.status == 1).ToList();
+                var selectedteam = _con.tbl_teams.FirstOrDefault(p => p.id == find_id.team_id);
+                var type = _con.tbl_plantypes.Where(e => e.status == 1).ToList();
+                var selectedtype = _con.tbl_plantypes.FirstOrDefault(p => p.id == find_id.type_id);
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                mainModel data = new mainModel()
+                {
+                    plan_data = find_id,
+                    planType_Data = selectedtype,
+                    team_data = selectedteam,
+                    team_details = team,
+                    planType_Details = type,
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+        }
+        [HttpPost]
+        public IActionResult update_plan(plan _plan)
+        {
+
+            _con.tbl_plan.Update(_plan);
+            _con.SaveChanges();
+            return RedirectToAction("plan_details");
+        }
+        public IActionResult plan_report(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var find_id = _con.tbl_plan.Find(id);
+                var plan_pillar = _con.tbl_plan_Pillars.Where(p => p.plan_id == find_id.id).ToList();
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                if (plan_pillar.Count == 0)
+                {
+                    TempData["msg"] = "there is no plan pillar";
+                };
+
+                var task_plan = _con.tbl_tasks.Where(a => a.plan_id == find_id.id).ToList();
+                if (task_plan.Count == 0)
+                {
+                    TempData["msg1"] = "there is no task";
+                };
+                var project_plan = _con.tbl_projects.Where(a => a.plan_id == find_id.id).ToList();
+                if (project_plan.Count == 0)
+                {
+                    TempData["msg1"] = "There is no project";
+                };
+
+                var team_details = _con.tbl_teams.Where(p => p.status == 1).ToList();
+                var emp = _con.tbl_employee.Where(p => p.status == 1).ToList();
+
+                var _types = _con.tbl_task_types.Where(p => p.status == 1).ToList();
+                var _status = _con.tbl_task_status.Where(p => p.status == 1).ToList();
+                var _prority = _con.tbl_taskpriority.Where(p => p.status == 1).ToList();
+                var _risk = _con.tbl_risks.ToList();
+
+                var emp_data = _con.tbl_employee.Where(p => p.status == 1).ToList();
+                var client_details = _con.tbl_clients.ToList();
+                var status = _con.tbl_projectStatus.Where(p => p.status == 1).ToList();
+                var priority = _con.tbl_projectpriority.Where(p => p.status == 1).ToList();
+                var type = _con.tbl_project_types.Where(p => p.status == 1).ToList();
+
+                mainModel data = new mainModel()
+                {
+                    logined_user = logined_user,
+                    projects_types = type,
+                    projects_prioritesDetails = priority,
+                    pro_Statusdetail = status,
+
+                    employee_details = emp_data,
+                    team_details = team_details,
+                    client_details = client_details,
+
+
+                    risk_details = _risk,
+                    task_details = task_plan,
+                    task_prioritesDetails = _prority,
+                    task_typedetails = _types,
+                    task_statusdetails = _status,
+                    project_details = project_plan,
+
+
+                    planPillar_Details = plan_pillar,
+                    plan_data = find_id,
+
+
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
+        [HttpPost]
+        public IActionResult add_planPillar(plan_pillars _plan)
+        {
+            _con.tbl_plan_Pillars.Add(_plan);
+            _con.SaveChanges();
+            return RedirectToAction("plan_report", new { id = _plan.plan_id });
+        }
+        public IActionResult del_planPillar(int id)
+        {
+
+            var del = _con.tbl_plan_Pillars.Find(id);
+
+            if (del != null)
+            {
+
+                int planId = del.plan_id;
+
+                _con.tbl_plan_Pillars.Remove(del);
+                _con.SaveChanges();
+
+
+                return RedirectToAction("plan_report", new { id = planId });
+            }
+            else
+            {
+
+                TempData["msg1"] = "Plan pillar not found.";
+                return RedirectToAction("plan_report", new { id = id }); // Redirect back to the report with the original id
+            }
+        }
+        public IActionResult edit_planPillar(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+
+                var plan_pillar = _con.tbl_plan_Pillars.Find(id);
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+
+                mainModel data = new mainModel()
+                {
+                    planPillar_data = plan_pillar,
+
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+        }
+        [HttpPost]
+        public IActionResult edit_planPillar(plan_pillars _Plan, int id)
+        {
+
+            var existingPlanPillar = _con.tbl_plan_Pillars.Find(id);
+
+            if (existingPlanPillar != null)
+            {
+
+                existingPlanPillar.name = _Plan.name;
+                existingPlanPillar.description = _Plan.description;
+                _con.SaveChanges();
+                return RedirectToAction("plan_report", new { id = existingPlanPillar.plan_id });
+            }
+            else
+            {
+                TempData["msg"] = "Plan pillar not found.";
+                return RedirectToAction("plan_report", new { id = id }); // Redirect back to the report with the original id
+            }
+        }
+        public IActionResult onepage_planDetails()
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var team = _con.tbl_teams.Where(e => e.status == 1).ToList();
+                var type = _con.tbl_plantypes.Where(e => e.status == 1).ToList();
+                var plan = _con.tbl_plan.ToList();
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+                var oneplan = _con.tbl_oneplan.Include(p => p.team_details).ToList();
+                mainModel data = new mainModel()
+                {
+                    oneplan_Details = oneplan,
+                    team_details = team,
+                    plan_Details = plan,
+                    planType_Details = type,
+                    logined_user = logined_user,
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+        }
+        [HttpPost]
+        public IActionResult add_oneplan(onepage_plan _Plan)
+        {
+            _con.tbl_oneplan.Add(_Plan);
+            _con.SaveChanges();
+            return RedirectToAction("onepage_planDetails");
+        }
+        [HttpPost]
+        public IActionResult add_PlanTask(task _task, IFormFile document)
+        {
+            if (document != null) // Check if a file was actually uploaded
+            {
+                string file_extension = Path.GetExtension(document.FileName);
+                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt")
+                {
+                    Random ran = new Random();
+                    string fileNAme = Path.GetFileName(document.FileName);
+                    var R_num = ran.Next(0000, 9999).ToString();
+                    var name = fileNAme = R_num; // This line seems redundant; you're re-assigning fileNAme
+                    string file_name = name + file_extension;
+                    string filepath = Path.Combine(_evn.WebRootPath, "documents", file_name);
+                    using (FileStream fs = new FileStream(filepath, FileMode.Create)) // Use 'using' for proper disposal
+                    {
+                        document.CopyTo(fs);
+                    }
+
+                    _task.document = file_name;
+                    // Store the path in the project object
+                }
+                else
+                {
+                    TempData["msg1"] = "This type of file is not supported !";
+                    return RedirectToAction("plan_report", new { id = _task.plan_id });
+                }
+            }
+            // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
+            _task.created_date = DateTime.Now.ToString();
+            _task.updated_date = DateTime.Now.ToString();
+
+            _con.tbl_tasks.Add(_task);
+            _con.SaveChanges();
+            TempData["msg1"] = "The Task is successfully added now !";
+            return RedirectToAction("plan_report", new { id = _task.plan_id });
+        }
+
+        public IActionResult update_PlanTask(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+
+                var task_datas = _con.tbl_tasks.Find(id);
+                var project = _con.tbl_projects.ToList();
+                var risk = _con.tbl_risks.ToList();
+                var _taskstatus = _con.tbl_task_status.Where(p => p.status == 1).ToList();
+                var status = _con.tbl_task_status.FirstOrDefault(p => p.id == task_datas.task_statuss);
+
+                var project_info = _con.tbl_projects.FirstOrDefault(p => p.Project_id == task_datas.project_);
+                var type = _con.tbl_task_types.Where(a => a.status == 1).ToList();
+                var _typedata = _con.tbl_task_types.FirstOrDefault(t => t.id == task_datas.task_types);
+                var _priority = _con.tbl_taskpriority.Where(p => p.status == 1).ToList();
+
+                var _priority_selected = _con.tbl_taskpriority.FirstOrDefault(p => p.id == task_datas.task_priority);
+                var _emp = _con.tbl_employee.Where(a => a.status == 1).ToList();
+                var emp_data = _con.tbl_employee.FirstOrDefault(a => a.id == task_datas.employee_ids);
+                mainModel _task_data = new mainModel
+                {
+                    project_details = project,
+                    employee_details = _emp,
+                    employee_data = emp_data,
+                    task_statusdetails = _taskstatus,
+                    task_statusdata = status,
+                    project_data = project_info,
+                    risk_details = risk,
+                    logined_user = logined_user,
+                    task_typedata = _typedata,
+                    task_typedetails = type,
+                    task_prioritesData = _priority_selected,
+                    task_prioritesDetails = _priority,
+
+                    task_data = _con.tbl_tasks.Find(id),
+
+                };
+
+                return View(_task_data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+
+
+        }
+        [HttpPost]
+        public IActionResult update_PlanTask(task _task, IFormFile document)
+        {
+            if (document != null) // Check if a file was actually uploaded
+            {
+                string file_extension = Path.GetExtension(document.FileName);
+                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt")
+                {
+                    Random ran = new Random();
+                    string fileNAme = Path.GetFileName(document.FileName);
+                    var R_num = ran.Next(0000, 9999).ToString();
+                    var name = fileNAme = R_num; // This line seems redundant; you're re-assigning fileNAme
+                    string file_name = name + file_extension;
+                    string filepath = Path.Combine(_evn.WebRootPath, "documents", file_name);
+                    using (FileStream fs = new FileStream(filepath, FileMode.Create)) // Use 'using' for proper disposal
+                    {
+                        document.CopyTo(fs);
+                    }
+
+                    _task.document = file_name;
+                    // Store the path in the project object
+                }
+                else
+                {
+                    TempData["msg1"] = "This type of file is not supported !";
+                    return RedirectToAction("plan_report", new { id = _task.plan_id });
+                }
+            }
+            // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
+            _task.created_date = DateTime.Now.ToString();
+            _task.updated_date = DateTime.Now.ToString();
+
+            _con.tbl_tasks.Update(_task);
+            _con.SaveChanges();
+            TempData["msg1"] = "The Task is successfully updated now !";
+            return RedirectToAction("plan_report", new { id = _task.plan_id });
+        }
+        public IActionResult delete_plantask(int id)
+        {
+
+            var del = _con.tbl_tasks.Find(id);
+
+            if (del != null)
+            {
+
+                int planId = del.plan_id;
+
+                _con.tbl_tasks.Remove(del);
+                _con.SaveChanges();
+
+
+                return RedirectToAction("plan_report", new { id = planId });
+            }
+            else
+            {
+
+                TempData["msg1"] = "Plan pillar not found.";
+                return RedirectToAction("plan_report", new { id = id }); // Redirect back to the report with the original id
+            }
+        }
+        [HttpPost]
+
+        public IActionResult add_planproject(project pro, IFormFile document)
+        {
+            if (document != null) // Check if a file was actually uploaded
+            {
+                string file_extension = Path.GetExtension(document.FileName);
+                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt")
+                {
+                    Random ran = new Random();
+                    string fileNAme = Path.GetFileName(document.FileName);
+                    var R_num = ran.Next(0000, 9999).ToString();
+                    var name = fileNAme = R_num; // This line seems redundant; you're re-assigning fileNAme
+                    string file_name = name + file_extension;
+                    string filepath = Path.Combine(_evn.WebRootPath, "documents", file_name);
+                    using (FileStream fs = new FileStream(filepath, FileMode.Create)) // Use 'using' for proper disposal
+                    {
+                        document.CopyTo(fs);
+                    }
+
+                    pro.document = file_name; // Store the path in the project object
+                }
+                else
+                {
+                    TempData["msg1"] = "This type of file is not supported !";
+                    return RedirectToAction("plan_report", new { id = pro.plan_id });
+                }
+            }
+            // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
+
+            _con.tbl_projects.Add(pro);
+            _con.SaveChanges();
+            TempData["msg1"] = "The project is successfully updated now !";
+
+            return RedirectToAction("plan_report", new { id = pro.plan_id });
+
+        }
+        public IActionResult update_planproject(int id)
+        {
+            var login = HttpContext.Session.GetString("user_session");
+            if (login != null)
+            {
+                var logined_user = _con.tbl_employee.Where(p => p.id == int.Parse(login)).ToList();
+
+
+                var find_id = _con.tbl_projects.Find(id);
+                var team_details = _con.tbl_teams.Where(p => p.status == 1).ToList();
+                var emp_data = _con.tbl_employee.Where(p => p.status == 1).ToList();
+                var client_details = _con.tbl_clients.ToList();
+                var status = _con.tbl_projectStatus.Where(p => p.status == 1).ToList();
+                var priority = _con.tbl_projectpriority.Where(p => p.status == 1).ToList();
+                var type = _con.tbl_project_types.Where(p => p.status == 1).ToList();
+                var client_name = _con.tbl_clients.FirstOrDefault(P => P.id == find_id.client_id);
+                var type_name = _con.tbl_project_types.FirstOrDefault(P => P.id == find_id.project_types);
+                var employe_name = _con.tbl_employee.FirstOrDefault(P => P.id == find_id.team_id);
+                var priority_name = _con.tbl_projectpriority.FirstOrDefault(P => P.id == find_id.project_priority);
+                var status_name = _con.tbl_projectStatus.FirstOrDefault(P => P.status_id == find_id.project_statuss);
+                mainModel data = new mainModel()
+                {
+                    client_data = client_name,
+                    projects_types = type,
+                    projects_prioritesDetails = priority,
+                    pro_Statusdetail = status,
+
+                    employee_details = emp_data,
+                    team_details = team_details,
+                    client_details = client_details,
+                    projects_typesData = type_name,
+                    employee_data = employe_name,
+                    projects_prioritesData = priority_name,
+                    proStatus_data = status_name,
+                    logined_user = logined_user,
+
+
+                    project_data = find_id
+                };
+                return View(data);
+            }
+            else
+            {
+                return RedirectToAction("login_form");
+            }
+        }
+        [HttpPost]
+        public IActionResult update_planproject(project pro, IFormFile document)
+        {
+            if (document != null) // Check if a file was actually uploaded
+            {
+                string file_extension = Path.GetExtension(document.FileName);
+                if (file_extension == ".pdf" || file_extension == ".docx" || file_extension == ".txt")
+                {
+                    Random ran = new Random();
+                    string fileNAme = Path.GetFileName(document.FileName);
+                    var R_num = ran.Next(0000, 9999).ToString();
+                    var name = fileNAme = R_num; // This line seems redundant; you're re-assigning fileNAme
+                    string file_name = name + file_extension;
+                    string filepath = Path.Combine(_evn.WebRootPath, "documents", file_name);
+                    using (FileStream fs = new FileStream(filepath, FileMode.Create)) // Use 'using' for proper disposal
+                    {
+                        document.CopyTo(fs);
+                    }
+
+                    pro.document = file_name; // Store the path in the project object
+                }
+                else
+                {
+                    TempData["msg1"] = "This type of file is not supported !";
+                    return RedirectToAction("plan_report", new { id = pro.plan_id });
+                }
+            }
+            // If document is null, the code will skip the file processing block.  pro object will be saved without file info.
+            pro.plan_id = 0;
+            _con.tbl_projects.Update(pro);
+            _con.SaveChanges();
+            TempData["msg1"] = "The project is successfully updated now !";
+            return RedirectToAction("plan_report", new { id = pro.plan_id });
+
+        }
+        public IActionResult delete_planproject(int id)
+        {
+
+            var del = _con.tbl_projects.Find(id);
+
+            if (del != null)
+            {
+
+                int planId = del.plan_id;
+
+                _con.tbl_projects.Remove(del);
+                _con.SaveChanges();
+
+
+                return RedirectToAction("plan_report", new { id = planId });
+            }
+            else
+            {
+
+                TempData["msg1"] = "Plan pillar not found.";
+                return RedirectToAction("plan_report", new { id = id }); // Redirect back to the report with the original id
+            }
+        }
+
 
     }
-
-
-
 }
+
+
+
 

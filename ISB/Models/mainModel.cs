@@ -91,5 +91,16 @@
         public List<Audit_Rating> Audit_Rating_Details { get; set; }
         public Audit_Conclusion Audit_Conclusion_Data { get; set; }
         public List<Audit_Conclusion> Audit_Conclusion_Details { get; set; }
+        public Docs Doc_Data { get; set; }
+        public List<Docs> Docs_Details { get; set; }
+        public plan_types planType_Data { get; set; }
+        public List<plan_types> planType_Details { get; set; }
+        public plan plan_data { get; set; }
+        public List<plan> plan_Details { get; set; }
+        public plan_pillars planPillar_data { get; set; }
+        public List<plan_pillars> planPillar_Details { get; set; }
+        public onepage_plan oneplan_data { get; set; }
+        public List<onepage_plan> oneplan_Details { get; set; }
+
     }
 }

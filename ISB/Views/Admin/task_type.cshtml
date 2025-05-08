@@ -52,7 +52,7 @@
                         <i class="fas fa-ellipsis-v action-icon"></i>
                         <ul class="action-menu">
                             <li><a href="@Url.Action("update_tasktype","admin",new{id = data.id})"><i class="fas fa-edit"></i>Edit</a></li>
-
+                            <li><a href="@Url.Action("task_typestatusUpdate","admin",new{id = data.id})"><i class="fa fa-toggle-on"></i>Status</a></li>
                             <li><a href="@Url.Action("delete_tasktype","admin",new{id = data.id})"><i class="fas fa-trash"></i>Delete</a></li>
                         </ul>
                     </td>

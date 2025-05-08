@@ -21,6 +21,7 @@ namespace ISB.Models
         public int project_priority { get; set; }
         public project_priority priority_details { get; set; }
         public int project_types { get; set; }
+        public int plan_id { get; set; }
         public project_type types_details { get; set; }
         
         public List<task> tasks_details { get; set; }

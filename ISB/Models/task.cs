@@ -29,7 +29,7 @@ namespace ISB.Models
         public int task_types { get; set; }
         public task_type _types { get; set; }
         /*No 6*/
- 
+        public int plan_id { get; set; }
         public List<sub_task> subtasks_details { get; set; }
     }
 }

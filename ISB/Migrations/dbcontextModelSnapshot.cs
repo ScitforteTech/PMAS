@@ -336,6 +336,30 @@ namespace ISB.Migrations
                     b.ToTable("tbl_measurePrority");
                 });
 
+            modelBuilder.Entity("ISB.Models.Docs", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("Desciprtion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tittle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tbl_docs");
+                });
+
             modelBuilder.Entity("ISB.Models.Impact_risk", b =>
                 {
                     b.Property<int>("id")
@@ -660,6 +684,25 @@ namespace ISB.Migrations
                     b.ToTable("tbl_designations");
                 });
 
+            modelBuilder.Entity("ISB.Models.doc_favourite", b =>
+                {
+                    b.Property<int>("_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("_id"));
+
+                    b.Property<int>("doc_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("_id");
+
+                    b.ToTable("tbl_favdocs");
+                });
+
             modelBuilder.Entity("ISB.Models.emp_type", b =>
                 {
                     b.Property<int>("id")
@@ -797,6 +840,124 @@ namespace ISB.Migrations
                     b.ToTable("tbl_maritalstatus");
                 });
 
+            modelBuilder.Entity("ISB.Models.onepage_plan", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("parent_Plan")
+                        .HasColumnType("int");
+
+                    b.Property<int>("team")
+                        .HasColumnType("int");
+
+                    b.Property<string>("timeframe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("type")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("team");
+
+                    b.ToTable("tbl_oneplan");
+                });
+
+            modelBuilder.Entity("ISB.Models.plan", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("team_id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("time_frame")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("type_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("team_id");
+
+                    b.HasIndex("type_id");
+
+                    b.ToTable("tbl_plan");
+                });
+
+            modelBuilder.Entity("ISB.Models.plan_pillars", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("plan_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tbl_plan_Pillars");
+                });
+
+            modelBuilder.Entity("ISB.Models.plan_types", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<string>("color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tbl_plantypes");
+                });
+
             modelBuilder.Entity("ISB.Models.project", b =>
                 {
                     b.Property<int>("Project_id")
@@ -822,6 +983,9 @@ namespace ISB.Migrations
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("plan_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("project_priority")
                         .HasColumnType("int");
@@ -1147,6 +1311,9 @@ namespace ISB.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("plan_id")
+                        .HasColumnType("int");
+
                     b.Property<int?>("project_")
                         .HasColumnType("int");
 
@@ -1455,6 +1622,33 @@ namespace ISB.Migrations
                     b.Navigation("roles_details");
                 });
 
+            modelBuilder.Entity("ISB.Models.onepage_plan", b =>
+                {
+                    b.HasOne("ISB.Models.team", "team_details")
+                        .WithMany("_oneplan")
+                        .HasForeignKey("team")
+                        .IsRequired();
+
+                    b.Navigation("team_details");
+                });
+
+            modelBuilder.Entity("ISB.Models.plan", b =>
+                {
+                    b.HasOne("ISB.Models.team", "_team")
+                        .WithMany("_plan")
+                        .HasForeignKey("team_id")
+                        .IsRequired();
+
+                    b.HasOne("ISB.Models.plan_types", "types")
+                        .WithMany("_plan")
+                        .HasForeignKey("type_id")
+                        .IsRequired();
+
+                    b.Navigation("_team");
+
+                    b.Navigation("types");
+                });
+
             modelBuilder.Entity("ISB.Models.project", b =>
                 {
                     b.HasOne("ISB.Models.client", "client_data")
@@ -1669,6 +1863,11 @@ namespace ISB.Migrations
                     b.Navigation("tasks_details");
                 });
 
+            modelBuilder.Entity("ISB.Models.plan_types", b =>
+                {
+                    b.Navigation("_plan");
+                });
+
             modelBuilder.Entity("ISB.Models.project", b =>
                 {
                     b.Navigation("audit_details");
@@ -1729,6 +1928,10 @@ namespace ISB.Migrations
 
             modelBuilder.Entity("ISB.Models.team", b =>
                 {
+                    b.Navigation("_oneplan");
+
+                    b.Navigation("_plan");
+
                     b.Navigation("pro_details");
                 });
 #pragma warning restore 612, 618

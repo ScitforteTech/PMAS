@@ -53,6 +53,14 @@ namespace ISB.Models
         public DbSet<CorrectiveMeasures> tbl_auditCorrectiveMeasures { get; set; }
         public DbSet<Audit_Rating> tbl_auditRating{ get; set; }
         public DbSet<Audit_Conclusion> tblaudit_Conclusions { get; set; }
+        public DbSet<Docs> tbl_docs { get; set; }
+
+        public DbSet<doc_favourite> tbl_favdocs { get; set; }
+        public DbSet<plan_types> tbl_plantypes { get; set; }
+        public DbSet<plan> tbl_plan { get; set; }
+        public DbSet<plan_pillars> tbl_plan_Pillars { get; set; }
+        public DbSet<onepage_plan> tbl_oneplan { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<designation>().
@@ -159,7 +167,15 @@ WithMany(d => d.auditproject_details).HasForeignKey(b => b.schedule_id).OnDelete
             modelBuilder.Entity<Audit_Conclusion>().
            HasOne(p => p._Rating).
          WithMany(d => d.conclusions).HasForeignKey(b => b.rating_id).OnDelete(DeleteBehavior.ClientSetNull);
-
+            modelBuilder.Entity<plan>().
+        HasOne(p => p.types).
+      WithMany(d => d._plan).HasForeignKey(b => b.type_id).OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<plan>().
+        HasOne(p => p._team).
+      WithMany(d => d._plan).HasForeignKey(b => b.team_id).OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<onepage_plan>().
+       HasOne(p => p.team_details).
+     WithMany(d => d._oneplan).HasForeignKey(b => b.team).OnDelete(DeleteBehavior.ClientSetNull);
         }
 
     }

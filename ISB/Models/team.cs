@@ -20,8 +20,8 @@ namespace ISB.Models
         public int status { get; set; }
 
       public List<project> pro_details { get; set; }
-
-
+        public List<plan> _plan { get; set; }
+        public List<onepage_plan> _oneplan { get; set; }
 
     }
 }

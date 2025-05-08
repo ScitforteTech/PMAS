@@ -1,0 +1,47 @@
+﻿@model ISB.Models.mainModel;
+@if (TempData["msg"] != null)
+{
+    <script>alert('@TempData["msg"]');</script>
+}
+<div class="content" id="content">
+    <div class="container mt-5">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="text-2xl font-bold">Add Document </h5>
+
+                </div>
+                <div class="modal-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Tittle</label>
+                                <input type="text" class="form-control" id="employeeName" name="Tittle" placeholder="e.g. John Doe" required>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label for="employeeEmail" class="form-label">Desciprtion</label>
+
+                                <textarea rows="15" cols="2" class="form-control" id="employeeDescription"
+                                          name="Desciprtion"
+                                          placeholder="Description" required>
+        </textarea>
+                            </div>
+                        </div>
+
+
+
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Save</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
